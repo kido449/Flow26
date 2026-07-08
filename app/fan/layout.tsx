@@ -4,11 +4,10 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, MessageSquare, Map, LogOut, Trophy } from "lucide-react"
-import { ThemeSwitcher } from "@/components/theme-switcher"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 import { useApp } from "@/lib/state/app-context"
 import { cn } from "@/lib/utils"
-import { GhostCursor } from "@/components/ui/ghost-cursor"
+import { LightRays } from "@/components/ui/light-rays"
 
 export default function FanLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -21,40 +20,41 @@ export default function FanLayout({ children }: { children: React.ReactNode }) {
   ]
 
   return (
-    <div className="flex min-h-dvh w-full bg-background text-foreground font-sans relative overflow-x-hidden">
-      {/* Cinematic Smoky GhostCursor Background for Fan Mode */}
-      <GhostCursor
-        color="#B19EEF"
-        brightness={1.3}
-        trailLength={35}
-        inertia={0.4}
-        bloomStrength={0.4}
-        grainIntensity={0.04}
-        className="fixed inset-0 z-0 pointer-events-none opacity-70"
-        zIndex={0}
+    <div className="dark flex min-h-dvh w-full bg-[#0a0a0a] text-white font-sans relative overflow-x-hidden">
+      {/* Atmospheric WebGL LightRays Background */}
+      <LightRays
+        raysOrigin="top-center"
+        raysColor="#ffffff"
+        raysSpeed={1.2}
+        lightSpread={1.4}
+        rayLength={2.0}
+        followMouse={true}
+        mouseInfluence={0.25}
+        noiseAmount={0.03}
+        distortion={0.06}
+        className="opacity-70 fixed inset-0 z-0 pointer-events-none"
       />
 
       <div className="flex-1 flex flex-col min-w-0 relative z-10 pointer-events-auto">
 
         {/* Header — thin 1px border, flat, no shadow, no backdrop blur orbs */}
-        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border px-6 py-3 flex items-center justify-between transition-colors duration-300">
+        <header className="sticky top-0 z-40 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between text-white transition-colors duration-300">
           <div className="flex items-center gap-5">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <span className="flex size-7 items-center justify-center rounded-sm bg-foreground text-background transition-transform duration-300 group-hover:scale-105">
+              <span className="flex size-7 items-center justify-center rounded-sm bg-white text-black transition-transform duration-300 group-hover:scale-105">
                 <Trophy className="size-3.5" />
               </span>
-              <span className="text-sm font-semibold tracking-tight text-foreground">{t("app.name")}</span>
+              <span className="text-sm font-semibold tracking-tight text-white">{t("app.name")}</span>
             </Link>
-            <div className="divider h-4 w-px bg-border" />
-            <span className="mono-label">[ 01 ] {t("fan.mode")}</span>
+            <div className="divider h-4 w-px bg-white/15" />
+            <span className="mono-label text-white/70">[ 01 ] {t("fan.mode")}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <ThemeSwitcher />
             <LocaleSwitcher />
             <Link
               href="/"
-              className="pill-btn text-muted-foreground ml-2"
+              className="pill-btn border-white/20 text-white/70 hover:bg-white hover:text-black hover:border-white ml-2"
             >
               <LogOut className="size-3" />
               <span className="hidden sm:inline">{t("fan.exit")}</span>
