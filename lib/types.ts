@@ -1,4 +1,4 @@
-// Shared domain types for Tournament Copilot (FIFA WC 2026)
+// Shared domain types for Pulse (Flow26) (FIFA WC 2026)
 
 export type Role = "fan" | "staff" | "command"
 

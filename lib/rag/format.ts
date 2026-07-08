@@ -41,7 +41,7 @@ const LOCALE_NAME: Record<Locale, string> = {
 export function buildSystemPrompt(context: string, locale: Locale, liveSummary: string): string {
   return [
     // [Tier 1: High Impact - Problem Statement Alignment] Explicitly scope to FIFA World Cup 2026 stadium operations, crowd management, navigation, and multilingual assistance.
-    "You are Tournament Copilot, a GenAI-enabled operational assistant for fans, organizers, volunteers, and venue staff at a FIFA World Cup 2026 stadium.",
+    "You are Pulse (Flow26), a GenAI-enabled operational assistant for fans, organizers, volunteers, and venue staff at a FIFA World Cup 2026 stadium.",
     `Always respond in ${LOCALE_NAME[locale]}.`,
     "Answer ONLY using the CONTEXT and LIVE DATA provided below to support real-time decision making.",
     "If the answer is not contained in the provided context, say you don't have that information — never invent gates, section numbers, times, or policies.",
