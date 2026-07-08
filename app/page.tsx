@@ -84,23 +84,29 @@ export default function Page() {
   }
 
   return (
-    <main className="relative min-h-screen w-screen overflow-x-hidden flex flex-col items-center justify-center px-4 py-12">
+    <main
+      className="relative min-h-screen w-full overflow-x-hidden flex flex-col items-center justify-center px-4 py-12"
+      style={{
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
 
-      {/* ── z-0: Base video layer — always visible, no JS gating ── */}
+      {/* ── z-0: Base video layer — true background fixed to viewport ── */}
       <video
         src="/Football_boots_splashing_wet_grass_202607072109.mp4"
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0 opacity-100"
+        className="fixed inset-0 w-full h-full object-cover object-center z-0 opacity-100 pointer-events-none"
       />
 
-      {/* ── z-10: Smart radial vignette — dark center/edges, lets video shine at mid-radius ── */}
+      {/* ── z-10: Smart radial vignette — dark center/edges, lets background shine ── */}
       <div
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="fixed inset-0 z-10 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.35) 100%)",
+          background: "radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%)",
         }}
       />
 
@@ -118,8 +124,8 @@ export default function Page() {
         className="opacity-45 z-10 pointer-events-none"
       />
 
-      {/* ── z-20: All UI content ── */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 flex flex-col items-center">
+      {/* ── z-20: Prominent & Readable Central Content Container (max-w-6xl) ── */}
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10 flex flex-col items-center justify-center">
 
       {/* ── Branding badge & Locale Switcher ── */}
       <div className="w-full flex items-center justify-between mb-8">
@@ -127,13 +133,13 @@ export default function Page() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
+          className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/15"
         >
           <span className="relative flex size-1.5">
             <span className="absolute inline-flex size-full rounded-full bg-white opacity-60 animate-pulse-ring" />
             <span className="relative inline-flex size-1.5 rounded-full bg-white" />
           </span>
-          <span className="mono-label text-white/70">{t("gateway.badge")}</span>
+          <span className="mono-label text-white/80">{t("gateway.badge")}</span>
         </motion.div>
 
         <motion.div
@@ -145,29 +151,29 @@ export default function Page() {
         </motion.div>
       </div>
 
-      {/* ── Page header ── */}
+      {/* ── Prominent Page Header ── */}
       <motion.div
         variants={headerVariants}
         initial="hidden"
         animate="show"
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 text-center mb-10 max-w-2xl"
+        className="relative z-10 text-center mb-10 max-w-3xl"
       >
-        <p className="mono-label text-white/50 mb-3 justify-center">{t("gateway.label")}</p>
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+        <p className="mono-label text-white/70 mb-3 justify-center text-xs uppercase tracking-widest">{t("gateway.label")}</p>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight">
           {t("gateway.title")}
         </h1>
-        <p className="text-sm text-white/60 mt-3 leading-relaxed font-light max-w-md mx-auto">
+        <p className="text-base sm:text-lg text-white/80 mt-4 leading-relaxed font-normal max-w-xl mx-auto">
           {t("gateway.subtitle")}
         </p>
       </motion.div>
 
-      {/* ── Three portal cards — staggered entrance ── */}
+      {/* ── Three portal cards — standard responsive sizing (max-w-6xl) ── */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4"
+        className="relative z-10 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6 my-4"
       >
 
         {/* ── Fan Portal ── */}
@@ -182,9 +188,9 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/10 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <Users className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">{t("gateway.fan.label")}</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.fan.title")}</h2>
-            <p className="text-xs text-white/65 leading-relaxed font-light">
+            <p className="mono-label text-white/70 mb-1 text-xs uppercase tracking-wider">{t("gateway.fan.label")}</p>
+            <h2 className="text-2xl font-bold text-white mb-3">{t("gateway.fan.title")}</h2>
+            <p className="text-sm text-white/80 leading-relaxed font-normal">
               {t("gateway.fan.desc")}
             </p>
           </div>
@@ -192,7 +198,7 @@ export default function Page() {
             <motion.button
               onClick={handleFanAccess}
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-white/20 text-white text-xs font-medium uppercase tracking-widest font-mono hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-white/25 text-white text-sm font-semibold uppercase tracking-widest font-mono hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer"
             >
               <span>{t("gateway.fan.cta")}</span>
               <ArrowRight className="size-3.5" />
@@ -212,9 +218,9 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/10 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <ClipboardList className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">{t("gateway.staff.label")}</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.staff.title")}</h2>
-            <p className="text-xs text-white/65 leading-relaxed font-light">
+            <p className="mono-label text-white/70 mb-1 text-xs uppercase tracking-wider">{t("gateway.staff.label")}</p>
+            <h2 className="text-2xl font-bold text-white mb-3">{t("gateway.staff.title")}</h2>
+            <p className="text-sm text-white/80 leading-relaxed font-normal">
               {t("gateway.staff.desc")}
             </p>
           </div>
@@ -234,7 +240,7 @@ export default function Page() {
               type="submit"
               disabled={isStaffLoading}
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-white/20 text-white text-xs font-medium uppercase tracking-widest font-mono hover:bg-white hover:text-black hover:border-white transition-all duration-300 disabled:opacity-50 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full border border-white/25 text-white text-sm font-semibold uppercase tracking-widest font-mono hover:bg-white hover:text-black hover:border-white transition-all duration-300 disabled:opacity-50 cursor-pointer"
             >
               {isStaffLoading
                 ? <><Sparkles className="size-3.5 animate-spin" /><span>Verifying...</span></>
@@ -264,9 +270,9 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/15 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <ShieldAlert className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">{t("gateway.command.label")}</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.command.title")}</h2>
-            <p className="text-xs text-white/65 leading-relaxed font-light">
+            <p className="mono-label text-white/70 mb-1 text-xs uppercase tracking-wider">{t("gateway.command.label")}</p>
+            <h2 className="text-2xl font-bold text-white mb-3">{t("gateway.command.title")}</h2>
+            <p className="text-sm text-white/80 leading-relaxed font-normal">
               {t("gateway.command.desc")}
             </p>
           </div>
@@ -297,7 +303,7 @@ export default function Page() {
               type="submit"
               disabled={isCommandLoading}
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border text-xs font-medium uppercase tracking-widest font-mono transition-all duration-300 disabled:opacity-50 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full border text-sm font-semibold uppercase tracking-widest font-mono transition-all duration-300 disabled:opacity-50 cursor-pointer"
               style={{
                 borderColor: "hsl(43 74% 49% / 0.5)",
                 color: "white",
