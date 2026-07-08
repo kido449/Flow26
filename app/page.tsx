@@ -119,7 +119,7 @@ export default function Page() {
       />
 
       {/* ── z-20: All UI content ── */}
-      <div className="relative z-20 w-full max-w-[1920px] mx-auto px-6 md:px-12 flex flex-col items-center">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 flex flex-col items-center">
 
       {/* ── Branding badge & Locale Switcher ── */}
       <div className="w-full flex items-center justify-between mb-8">
