@@ -44,7 +44,7 @@ export function WayfindingView() {
   const [toId, setToId] = useState<string>("sec-104")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
-  const [isNavigating, setIsNavigating] = useState<boolean>(true)
+  const [isNavigating, setIsNavigating] = useState<boolean>(false)
   const [zoomLevel, setZoomLevel] = useState<number>(1)
 
   // Map constraints reference for drag
@@ -53,7 +53,6 @@ export function WayfindingView() {
   // Reset step index whenever route changes
   useEffect(() => {
     setCurrentStepIndex(0)
-    setIsNavigating(true)
   }, [fromId, toId])
 
   const toPoi = useMemo(() => RAPIDO_POIS.find((p) => p.id === toId) || RAPIDO_POIS[1], [toId])
@@ -74,6 +73,8 @@ export function WayfindingView() {
     if (id === fromId) return
     setToId(id)
     setSearchQuery("")
+    setIsNavigating(true)
+    setCurrentStepIndex(0)
     const p = RAPIDO_POIS.find((x) => x.id === id)
     toast.success(`Route calculated to ${p?.label || "destination"}`)
   }
@@ -317,6 +318,16 @@ export function WayfindingView() {
                 placeholder={t("wayfinding.findPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    if (matchingPois.length > 0) {
+                      handleSelectPoi(matchingPois[0].id)
+                    } else {
+                      setIsNavigating(true)
+                    }
+                  }
+                }}
                 className="bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none w-full font-sans"
               />
               {searchQuery && (
@@ -425,19 +436,6 @@ export function WayfindingView() {
         )}
       </AnimatePresence>
 
-      {/* If navigation ended, allow easy re-engaging */}
-      {!isNavigating && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex justify-center">
-          <button
-            type="button"
-            onClick={() => setIsNavigating(true)}
-            className="py-3.5 px-8 rounded-full bg-primary text-primary-foreground font-mono uppercase tracking-[0.2em] text-xs font-bold shadow-2xl shadow-primary/30 hover:scale-105 transition-all cursor-pointer flex items-center gap-2 pointer-events-auto"
-          >
-            <Navigation className="size-4" />
-            <span>Resume Rapido Route</span>
-          </button>
-        </div>
-      )}
     </div>
   )
 }
