@@ -119,7 +119,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="flex-1 w-full max-w-5xl mx-auto px-5 md:px-8 pb-28 md:pb-10 pt-8 animate-reveal">
+        <main className="flex-1 w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-10 lg:px-16 pb-28 md:pb-10 pt-8 animate-reveal">
           {children}
         </main>
       </div>
