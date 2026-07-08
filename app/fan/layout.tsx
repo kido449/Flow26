@@ -63,7 +63,7 @@ export default function FanLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 w-full pb-28 animate-reveal">
+        <main className="flex-1 w-full animate-reveal">
           {children}
         </main>
       </div>

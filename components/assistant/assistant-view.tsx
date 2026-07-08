@@ -140,7 +140,7 @@ export function AssistantView() {
             onKeyDown={handleKeyDown}
             placeholder="e.g. Where is the nearest accessible restroom to Gate 7?"
             rows={1}
-            className="w-full h-12 min-h-12 max-h-24 resize-none bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground px-4 py-3 text-sm focus:outline-none focus:border-foreground/50 transition-colors scrollbar-hide rounded-xl font-normal leading-normal"
+            className="mt-auto h-12 w-full bg-neutral-950 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary resize-none placeholder:text-muted-foreground transition-colors scrollbar-hide font-normal leading-normal"
             aria-label={t("assistant.placeholder")}
           />
         </div>

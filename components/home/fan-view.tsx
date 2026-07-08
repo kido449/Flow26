@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Sparkles, MapPin, Trophy, MessageSquare, Clock, ChevronRight, AlertTriangle, HelpCircle } from "lucide-react"
+import { Sparkles, MapPin, Trophy, Clock, ChevronRight, AlertTriangle, ShieldCheck } from "lucide-react"
 import { AssistantView } from "@/components/assistant/assistant-view"
 import { useApp } from "@/lib/state/app-context"
 
@@ -11,171 +11,148 @@ export function FanView() {
   const [videoLoaded, setVideoLoaded] = useState(false)
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-6 py-8 min-h-screen flex flex-col justify-start animate-fade-up">
-
-      {/* ── 1. Normalized Scoreboard Widget (max-w-3xl header banner size) ── */}
-      <div className="w-full max-w-3xl mx-auto mb-6 rounded-xl bg-card border border-border overflow-hidden shadow-lg" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
-        {/* Tournament label */}
-        <div className="px-5 py-2 border-b border-border bg-muted/40">
-          <span className="text-[11px] font-mono text-muted-foreground tracking-wide uppercase">
+    <div className="relative w-full min-h-screen bg-black overflow-x-hidden flex items-center justify-center py-10">
+      {/* ── Hard-Bounded Dashboard Frame (Center Container) ── */}
+      <div className="relative z-20 w-full max-w-[1200px] h-[85vh] max-h-[800px] bg-neutral-900/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-4">
+        
+        {/* ── Top Row: Scoreboard ── */}
+        <div className="w-full h-16 border-b border-white/10 px-6 flex items-center justify-between bg-black/40 shrink-0" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+          {/* Tournament tag */}
+          <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider hidden sm:inline">
             {t("fan.scoreboard.tourney")}
+          </span>
+
+          {/* Match items */}
+          <div className="flex items-center gap-6 sm:gap-10">
+            {/* Home team */}
+            <div className="flex items-center gap-2">
+              <div className="size-6 rounded bg-red-600 flex items-center justify-center text-white text-xs font-bold">
+                ✚
+              </div>
+              <span className="text-sm font-semibold text-foreground">Switzerland</span>
+            </div>
+
+            {/* Score */}
+            <div className="flex items-center gap-3 font-mono">
+              <span className="text-xl font-bold text-foreground">0</span>
+              <span className="text-xs text-muted-foreground uppercase font-sans tracking-wide">Fulltime</span>
+              <span className="text-xl font-bold text-foreground">0</span>
+            </div>
+
+            {/* Away team */}
+            <div className="flex items-center gap-2">
+              <div className="size-6 rounded overflow-hidden flex">
+                <div className="flex-1 bg-[#FCD116]" />
+                <div className="flex-1 bg-[#003893]" />
+                <div className="flex-1 bg-[#CE1126]" />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Colombia</span>
+            </div>
+          </div>
+
+          {/* Status pill */}
+          <span className="text-xs font-mono text-muted-foreground">
+            {t("fan.scoreboard.today")}
           </span>
         </div>
 
-        {/* Compact match body */}
-        <div className="flex items-center justify-center gap-6 sm:gap-12 px-6 py-5">
-          {/* Home team */}
-          <div className="flex flex-col items-center gap-2 w-24">
-            <div className="size-12 sm:size-14 rounded-lg bg-red-600 flex items-center justify-center text-white text-2xl font-bold shadow">
-              ✚
+        {/* ── Bottom Row: Rigid Two-Column Split Interface ── */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 h-full overflow-hidden">
+          
+          {/* Left Column: Actions Panel */}
+          <div className="border-r border-white/10 p-6 flex flex-col gap-4 overflow-y-auto bg-neutral-950/30">
+            <div className="flex flex-col gap-2">
+              <p className="mono-label text-xs uppercase tracking-widest text-muted-foreground">
+                {t("fan.hero.label")}
+              </p>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                {t("fan.hero.title1")}
+              </h1>
+              <p className="text-xs text-muted-foreground leading-relaxed font-light">
+                {t("fan.hero.desc")}
+              </p>
             </div>
-            <span className="text-sm font-semibold text-foreground tracking-wide">Switzerland</span>
-          </div>
 
-          {/* Home score */}
-          <span className="text-4xl sm:text-5xl font-bold text-foreground tabular-nums font-mono">0</span>
-
-          {/* Match status */}
-          <div className="flex flex-col items-center gap-1 px-3 text-center">
-            <span className="text-sm font-semibold text-foreground">{t("fan.scoreboard.fulltime")}</span>
-            <span className="text-xs text-muted-foreground">{t("fan.scoreboard.today")}</span>
-            <span className="text-xs text-muted-foreground font-mono bg-foreground/10 px-2 py-0.5 rounded-full">{t("fan.scoreboard.penalties")}</span>
-          </div>
-
-          {/* Away score */}
-          <span className="text-4xl sm:text-5xl font-bold text-foreground tabular-nums font-mono">0</span>
-
-          {/* Away team */}
-          <div className="flex flex-col items-center gap-2 w-24">
-            <div className="size-12 sm:size-14 rounded-lg overflow-hidden shadow flex flex-col">
-              <div className="flex-1 bg-[#FCD116]" />
-              <div className="flex-1 bg-[#003893]" />
-              <div className="flex-1 bg-[#CE1126]" />
-            </div>
-            <span className="text-sm font-semibold text-foreground tracking-wide">Colombia</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 2. Responsive Proportional Grid Layout (lg:grid-cols-3) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mt-2">
-
-        {/* LEFT PANEL (1 column): Vertical Stack for Quick Actions, Emergency Options & Info */}
-        <div className="lg:col-span-1 flex flex-col gap-5">
-          {/* Hero text */}
-          <div className="flex flex-col gap-3">
-            <p className="mono-label text-xs uppercase tracking-widest text-muted-foreground">{t("fan.hero.label")}</p>
-
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground leading-snug">
-              {t("fan.hero.title1")}<br />
-              <span className="text-muted-foreground font-light">{t("fan.hero.title2")}</span>
-            </h1>
-
-            <p className="text-sm text-muted-foreground leading-relaxed font-light">
-              {t("fan.hero.desc")}
-            </p>
-          </div>
-
-          {/* Quick Action Navigation & Emergency Options */}
-          <div className="flex flex-col gap-2.5">
-            <Link
-              href="/fan/wayfinding"
-              className="flex items-center justify-between p-3.5 rounded-xl bg-card border border-border hover:border-foreground/30 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="size-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                  <MapPin className="size-4" />
+            {/* Quick Actions */}
+            <div className="flex flex-col gap-2 pt-1">
+              <Link
+                href="/fan/wayfinding"
+                className="flex items-center justify-between p-3 rounded-xl bg-neutral-900/60 border border-white/10 hover:border-white/30 transition-all group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="size-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <MapPin className="size-3.5" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-foreground">{t("fan.chat.mapBtn")}</div>
+                    <div className="text-[10px] text-muted-foreground">{t("fan.pill.fastest")}</div>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <div className="text-xs font-semibold text-foreground">{t("fan.chat.mapBtn")}</div>
-                  <div className="text-[11px] text-muted-foreground">{t("fan.pill.fastest")}</div>
+                <ChevronRight className="size-3.5 text-muted-foreground group-hover:text-foreground transition-all" />
+              </Link>
+
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-neutral-900/60 border border-white/10">
+                <div className="size-7 rounded-lg bg-white/10 flex items-center justify-center text-foreground shrink-0">
+                  <Clock className="size-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-foreground">{t("fan.pill.kickoff")}</div>
+                  <div className="text-[10px] text-muted-foreground">Matchday Schedule</div>
                 </div>
               </div>
-              <ChevronRight className="size-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-            </Link>
 
-            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-card border border-border">
-              <div className="size-8 rounded-lg bg-foreground/10 flex items-center justify-center text-foreground shrink-0">
-                <Clock className="size-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-semibold text-foreground">{t("fan.pill.kickoff")}</div>
-                <div className="text-[11px] text-muted-foreground">Matchday Schedule</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-card border border-border">
-              <div className="size-8 rounded-lg bg-foreground/10 flex items-center justify-center text-foreground shrink-0">
-                <Sparkles className="size-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-semibold text-foreground">{t("fan.pill.sensory")}</div>
-                <div className="text-[11px] text-muted-foreground">Calm Zones & Sensory Guide</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-card border border-border">
-              <div className="size-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
-                <AlertTriangle className="size-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-xs font-semibold text-foreground">Emergency Services</div>
-                <div className="text-[11px] text-muted-foreground">First Aid & Security Hubs</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Trophy Live Video Card */}
-          <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-border bg-muted group transition-all duration-500 relative">
-            <video
-              src="/FIFA_trophy_with_'26'_202607062242.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              onLoadedData={() => setVideoLoaded(true)}
-              onCanPlay={() => setVideoLoaded(true)}
-              className="size-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-              style={{ opacity: videoLoaded ? 1 : 0, transition: "opacity 0.5s ease" }}
-              onError={(e) => { e.currentTarget.style.display = "none" }}
-            />
-            {!videoLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="size-10 rounded-full bg-foreground/5 border border-border flex items-center justify-center">
-                  <Trophy className="size-5 text-muted-foreground" />
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-neutral-900/60 border border-white/10">
+                <div className="size-7 rounded-lg bg-white/10 flex items-center justify-center text-foreground shrink-0">
+                  <Sparkles className="size-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-foreground">{t("fan.pill.sensory")}</div>
+                  <div className="text-[10px] text-muted-foreground">Calm Zones & Guide</div>
                 </div>
               </div>
-            )}
-            <div className="absolute bottom-2.5 right-2.5 flex items-center gap-2 rounded-full bg-background/90 backdrop-blur px-2.5 py-1 border border-border">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full rounded-full bg-foreground opacity-40 animate-pulse-ring" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-foreground" />
-              </span>
-              <span className="mono-label text-[11px]">{t("fan.pill.trophy")}</span>
+
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-neutral-900/60 border border-white/10">
+                <div className="size-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                  <AlertTriangle className="size-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-foreground">Emergency Hub</div>
+                  <div className="text-[10px] text-muted-foreground">First Aid & Security</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Trophy Feed Card */}
+            <div className="mt-auto w-full aspect-[16/10] rounded-xl overflow-hidden border border-white/10 bg-black/40 relative shrink-0">
+              <video
+                src="/FIFA_trophy_with_'26'_202607062242.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                onLoadedData={() => setVideoLoaded(true)}
+                onCanPlay={() => setVideoLoaded(true)}
+                className="size-full object-cover object-center"
+                style={{ opacity: videoLoaded ? 1 : 0, transition: "opacity 0.5s ease" }}
+                onError={(e) => { e.currentTarget.style.display = "none" }}
+              />
+              <div className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-black/80 backdrop-blur px-2.5 py-0.5 border border-white/10">
+                <span className="relative flex size-1.5">
+                  <span className="absolute inline-flex size-full rounded-full bg-white opacity-60 animate-pulse-ring" />
+                  <span className="relative inline-flex size-1.5 rounded-full bg-white" />
+                </span>
+                <span className="mono-label text-[10px]">{t("fan.pill.trophy")}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT PANEL (2 columns): Fixed Proportional Height AI Chat Display Box */}
-        <div className="lg:col-span-2 flex flex-col gap-4">
-          <div className="flex items-center justify-between px-1">
-            <p className="mono-label text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <MessageSquare className="size-3.5" />
-              <span>{t("fan.chat.label")}</span>
-            </p>
-            <Link href="/fan/wayfinding" className="pill-btn text-xs text-muted-foreground hover:text-foreground">
-              <span>{t("fan.chat.mapBtn")}</span>
-              <ChevronRight className="size-3" />
-            </Link>
-          </div>
-
-          <div className="w-full h-[65vh] max-h-[650px] bg-neutral-900/60 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col overflow-hidden p-5 sm:p-6 shadow-xl">
+          {/* Right Column: AI Chat Area */}
+          <div className="p-6 flex flex-col h-full bg-black/10 overflow-hidden">
             <AssistantView />
           </div>
+
         </div>
-
       </div>
-
     </div>
   )
 }
