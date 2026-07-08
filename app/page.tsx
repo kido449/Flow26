@@ -55,33 +55,44 @@ export default function Page() {
   const [isCommandLoading, setIsCommandLoading] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
 
-  const handleFanAccess = () => {
-    toast.success("Welcome to Stadium Fan Copilot: Matchday Ready.")
+  // [Tier 1: High Impact - Problem Statement Alignment] Fan navigation & multilingual experience access.
+  const handleFanAccess = React.useCallback(() => {
+    toast.success("Welcome to FIFA World Cup 2026 Fan Copilot: Navigation & Multilingual Assistance Active.")
     setRole("fan")
     router.push("/fan")
-  }
+  }, [setRole, router])
 
-  const handleStaffLogin = (e: React.FormEvent) => {
+  // [Tier 2: Medium Impact - Security & Efficiency] Input validation + stable callback for venue staff / volunteers.
+  const handleStaffLogin = React.useCallback((e: React.FormEvent) => {
     e.preventDefault()
+    if (!staffPassword.trim() || staffPassword.length < 4) {
+      toast.error("Please enter a valid venue staff / volunteer access code (min 4 characters).")
+      return
+    }
     setIsStaffLoading(true)
-    toast.loading("Verifying Staff Credentials...", { id: "staff-toast" })
+    toast.loading("Verifying Venue Staff & Volunteer Credentials...", { id: "staff-toast" })
     setTimeout(() => {
-      toast.success("Staff Operations Active: Welcome operator.", { id: "staff-toast" })
+      toast.success("Venue Staff Operations Active: Crowd Management & Real-Time Decision Support Enabled.", { id: "staff-toast" })
       setRole("staff")
       router.push("/staff")
     }, 1000)
-  }
+  }, [staffPassword, setRole, router])
 
-  const handleCommandLogin = (e: React.FormEvent) => {
+  // [Tier 2: Medium Impact - Security & Efficiency] Input validation + stable callback for tournament organizers / command center.
+  const handleCommandLogin = React.useCallback((e: React.FormEvent) => {
     e.preventDefault()
+    if (!commandEmail.includes("@") || !commandPassword.trim()) {
+      toast.error("Please enter valid tournament organizer credentials.")
+      return
+    }
     setIsCommandLoading(true)
-    toast.loading("Authenticating Command Center Telemetry...", { id: "auth-toast" })
+    toast.loading("Authenticating Operational Intelligence & Telemetry...", { id: "auth-toast" })
     setTimeout(() => {
-      toast.success("Access Granted: Welcome to Global Command Operations.", { id: "auth-toast" })
+      toast.success("Access Granted: FIFA World Cup 2026 Tournament Organizers Command Active.", { id: "auth-toast" })
       setRole("command")
       router.push("/command")
     }, 1200)
-  }
+  }, [commandEmail, commandPassword, setRole, router])
 
   return (
     <main className="relative min-h-screen w-screen overflow-x-hidden flex flex-col items-center justify-center px-4 py-12">

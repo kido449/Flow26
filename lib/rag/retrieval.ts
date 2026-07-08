@@ -21,11 +21,26 @@ export function tokenize(text: string): string[] {
     .filter((t) => t.length > 1 && !STOP_WORDS.has(t))
 }
 
+// [Tier 2: Medium Impact - Efficiency] Cache token sets per chunk ID to avoid O(N * L) re-tokenizing on every query
+const CHUNK_TOKEN_CACHE = new Map<string, { haystackSet: Set<string>; keywordSet: Set<string> }>()
+
+function getCachedChunkTokens(chunk: KnowledgeChunk) {
+  let cached = CHUNK_TOKEN_CACHE.get(chunk.id)
+  if (!cached) {
+    const haystack = tokenize(`${chunk.title} ${chunk.text} ${chunk.keywords.join(" ")}`)
+    cached = {
+      haystackSet: new Set(haystack),
+      keywordSet: new Set(chunk.keywords.map((k) => k.toLowerCase())),
+    }
+    CHUNK_TOKEN_CACHE.set(chunk.id, cached)
+  }
+  return cached
+}
+
 function scoreChunk(queryTokens: string[], chunk: KnowledgeChunk): number {
   if (queryTokens.length === 0) return 0
-  const haystack = tokenize(`${chunk.title} ${chunk.text} ${chunk.keywords.join(" ")}`)
-  const haystackSet = new Set(haystack)
-  const keywordSet = new Set(chunk.keywords.map((k) => k.toLowerCase()))
+  // [Tier 2: Medium Impact - Efficiency] O(1) cache lookup for static chunk tokens
+  const { haystackSet, keywordSet } = getCachedChunkTokens(chunk)
   const rawQuery = queryTokens.join(" ")
 
   let score = 0

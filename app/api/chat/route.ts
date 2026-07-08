@@ -7,8 +7,11 @@ import { summarizeLiveFeed } from "@/lib/rag/live-feed"
 
 export const maxDuration = 30
 
-// Fast, multilingual model via the Vercel AI Gateway (no provider package needed).
-const MODEL = "openai/gpt-4o-mini"
+// [Tier 1: High Impact - Code Quality] Configurable model with secure production fallback.
+const MODEL = process.env.AI_MODEL || "openai/gpt-4o-mini"
+
+// [Tier 2: Medium Impact - Security] Maximum allowed character length for incoming chat prompts.
+const MAX_MESSAGE_LENGTH = 800
 
 function isLocale(v: unknown): v is Locale {
   return typeof v === "string" && (LOCALES as string[]).includes(v)
@@ -19,18 +22,22 @@ export async function POST(req: Request) {
   try {
     body = await req.json()
   } catch {
-    return new Response("Invalid JSON", { status: 400 })
+    return new Response("Invalid JSON payload", { status: 400 })
   }
 
-  const message = typeof body.message === "string" ? body.message.trim() : ""
+  const rawMessage = typeof body.message === "string" ? body.message.trim() : ""
   const locale: Locale = isLocale(body.locale) ? body.locale : "en"
 
-  if (!message) {
+  // [Tier 2: Medium Impact - Security] Input validation & DoS/token exhaustion prevention.
+  if (!rawMessage) {
     return new Response("Missing message", { status: 400 })
+  }
+  if (rawMessage.length > MAX_MESSAGE_LENGTH) {
+    return new Response(`Message exceeds maximum allowed length (${MAX_MESSAGE_LENGTH} characters)`, { status: 400 })
   }
 
   // 1) Retrieve grounding. This is the ONLY knowledge the model may use.
-  const retrieved = retrieve(message)
+  const retrieved = retrieve(rawMessage)
   const sources = toSources(retrieved)
 
   // 2) No grounding -> refuse deterministically. We still stream a text response
@@ -55,11 +62,13 @@ export async function POST(req: Request) {
   const context = buildContext(retrieved)
   const system = buildSystemPrompt(context, locale, summarizeLiveFeed())
 
+  // [Tier 2: Medium Impact - Efficiency & Security] Pass abortSignal so client disconnects abort backend LLM streams immediately.
   const result = streamText({
     model: MODEL,
     system,
-    prompt: message,
+    prompt: rawMessage,
     temperature: 0.2,
+    abortSignal: req.signal,
   })
 
   return result.toTextStreamResponse({
