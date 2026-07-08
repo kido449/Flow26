@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { AppProvider } from "@/lib/state/app-context"
 import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider"
+import { PreventZoom } from "@/components/prevent-zoom"
 import "./globals.css"
 
 const inter = Inter({
@@ -32,6 +33,8 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -44,6 +47,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground selection:bg-foreground/10 selection:text-foreground`}
       >
+        <PreventZoom />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange={false}>
           <AppProvider>{children}</AppProvider>
           <Toaster />
