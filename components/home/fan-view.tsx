@@ -19,7 +19,7 @@ export function FanView() {
         {/* Tournament label */}
         <div className="px-4 py-2 border-b border-border">
           <span className="text-[11px] font-mono text-muted-foreground tracking-wide">
-            2026 FIFA World Cup &nbsp;·&nbsp; Round of 16
+            {t("fan.scoreboard.tourney")}
           </span>
         </div>
 
@@ -38,9 +38,9 @@ export function FanView() {
 
           {/* Match status */}
           <div className="flex flex-col items-center gap-1 px-4">
-            <span className="text-sm font-semibold text-foreground">Full-time</span>
-            <span className="text-xs text-muted-foreground">Today</span>
-            <span className="text-xs text-muted-foreground font-mono">Fine: 4-3</span>
+            <span className="text-sm font-semibold text-foreground">{t("fan.scoreboard.fulltime")}</span>
+            <span className="text-xs text-muted-foreground">{t("fan.scoreboard.today")}</span>
+            <span className="text-xs text-muted-foreground font-mono">{t("fan.scoreboard.penalties")}</span>
           </div>
 
           {/* Away score */}
@@ -62,29 +62,29 @@ export function FanView() {
       {/* ── [ 01 ] Hero ── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2 pb-8 border-b border-border">
         <div className="lg:col-span-7 flex flex-col gap-5">
-          <p className="mono-label">[ 01 ] {STADIUM_NAME} • Matchday Fan Copilot</p>
+          <p className="mono-label">{t("fan.hero.label")}</p>
 
           <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground leading-tight">
-            Fan Copilot<br />
-            <span className="text-muted-foreground font-light">Assistant</span>
+            {t("fan.hero.title1")}<br />
+            <span className="text-muted-foreground font-light">{t("fan.hero.title2")}</span>
           </h1>
 
           <p className="text-sm text-muted-foreground max-w-xl leading-relaxed font-light">
-            Ask any question. Get instant, multilingual answers, live queue heatmaps, and AI-optimised Pathfinder routing. Grounded in official FIFA World Cup 2026 stadium policies and real-time sensory corridor data.
+            {t("fan.hero.desc")}
           </p>
 
           <div className="flex items-center gap-2 pt-1 flex-wrap">
             <span className="pill-btn text-muted-foreground">
               <Clock className="size-3" />
-              <span>Kickoff in 2h 15m</span>
+              <span>{t("fan.pill.kickoff")}</span>
             </span>
             <span className="pill-btn text-muted-foreground">
               <MapPin className="size-3" />
-              <span>Gate 4 Fastest</span>
+              <span>{t("fan.pill.fastest")}</span>
             </span>
             <span className="pill-btn text-muted-foreground">
               <Sparkles className="size-3" />
-              <span>Sensory Safe Corridors</span>
+              <span>{t("fan.pill.sensory")}</span>
             </span>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function FanView() {
                 <span className="absolute inline-flex size-full rounded-full bg-foreground opacity-40 animate-pulse-ring" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-foreground" />
               </span>
-              <span className="mono-label">Live Trophy Feed</span>
+              <span className="mono-label">{t("fan.pill.trophy")}</span>
             </div>
           </div>
         </div>
@@ -125,9 +125,9 @@ export function FanView() {
       {/* ── [ 02 ] Matchday Chat ── */}
       <section className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <p className="mono-label">[ 02 ] AI Copilot Chat</p>
+          <p className="mono-label">{t("fan.chat.label")}</p>
           <Link href="/fan/wayfinding" className="pill-btn text-muted-foreground hover:text-foreground">
-            <span>Pathfinder AI Map</span>
+            <span>{t("fan.chat.mapBtn")}</span>
             <ChevronRight className="size-3" />
           </Link>
         </div>

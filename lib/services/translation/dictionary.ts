@@ -118,6 +118,51 @@ export type TranslationKey =
   | "stub.incidents.desc"
   | "stub.action"
   | "stub.back"
+  | "gateway.badge"
+  | "gateway.label"
+  | "gateway.title"
+  | "gateway.subtitle"
+  | "gateway.fan.label"
+  | "gateway.fan.title"
+  | "gateway.fan.desc"
+  | "gateway.fan.cta"
+  | "gateway.staff.label"
+  | "gateway.staff.title"
+  | "gateway.staff.desc"
+  | "gateway.staff.cta"
+  | "gateway.command.label"
+  | "gateway.command.title"
+  | "gateway.command.desc"
+  | "gateway.command.cta"
+  | "fan.mode"
+  | "fan.exit"
+  | "fan.scoreboard.tourney"
+  | "fan.scoreboard.fulltime"
+  | "fan.scoreboard.today"
+  | "fan.scoreboard.penalties"
+  | "fan.hero.label"
+  | "fan.hero.title1"
+  | "fan.hero.title2"
+  | "fan.hero.desc"
+  | "fan.pill.kickoff"
+  | "fan.pill.fastest"
+  | "fan.pill.sensory"
+  | "fan.pill.trophy"
+  | "fan.chat.label"
+  | "fan.chat.mapBtn"
+  | "wayfinding.findPlaceholder"
+  | "wayfinding.liveSensor"
+  | "wayfinding.activeRoute"
+  | "wayfinding.navigatingTo"
+  | "wayfinding.etaWalk"
+  | "wayfinding.distance"
+  | "wayfinding.meters"
+  | "wayfinding.rapidoActive"
+  | "wayfinding.rapidoDesc"
+  | "wayfinding.stepOf"
+  | "wayfinding.nextStep"
+  | "wayfinding.exitWayfinding"
+  | "wayfinding.endRoute"
 
 type Dictionary = Record<TranslationKey, string>
 
@@ -235,6 +280,51 @@ const en: Dictionary = {
   "stub.incidents.desc": "Matchday security incident ticketing, lost child locator protocol, medical emergency dispatch, and property logs.",
   "stub.action": "Preview module",
   "stub.back": "Back to More modes",
+  "gateway.badge": "FIFA World Cup 2026 • Pulse",
+  "gateway.label": "[ 00 ] Multi-Role Gateway",
+  "gateway.title": "Stadium Operations Portal",
+  "gateway.subtitle": "Select your operational tier to access customised telemetry, wayfinding, and live matchday assistance.",
+  "gateway.fan.label": "[ 01 ] Public Access",
+  "gateway.fan.title": "Fan Experience",
+  "gateway.fan.desc": "Ask any question. Get instant, multilingual answers, live queue heatmaps, and AI-optimised Pathfinder routing.",
+  "gateway.fan.cta": "Enter Fan Portal",
+  "gateway.staff.label": "[ 02 ] Field Personnel",
+  "gateway.staff.title": "Staff & Volunteers",
+  "gateway.staff.desc": "Real-time concourse coordination, sensory safe queue routing, and automated incident triage.",
+  "gateway.staff.cta": "Enter Staff Portal",
+  "gateway.command.label": "[ 03 ] Tactical Command",
+  "gateway.command.title": "Command Center",
+  "gateway.command.desc": "Full stadium telemetry streaming, biometric crowd heatmaps, and DEFCON level monitoring.",
+  "gateway.command.cta": "Enter Command Center",
+  "fan.mode": "Fan Mode",
+  "fan.exit": "Exit",
+  "fan.scoreboard.tourney": "2026 FIFA World Cup · Round of 16",
+  "fan.scoreboard.fulltime": "Full-time",
+  "fan.scoreboard.today": "Today",
+  "fan.scoreboard.penalties": "Fine: 4-3",
+  "fan.hero.label": "[ 01 ] Atlas Metropolitan Stadium • Matchday Fan Copilot",
+  "fan.hero.title1": "Fan Copilot",
+  "fan.hero.title2": "Assistant",
+  "fan.hero.desc": "Ask any question. Get instant, multilingual answers, live queue heatmaps, and AI-optimised Pathfinder routing. Grounded in official FIFA World Cup 2026 stadium policies and real-time sensory corridor data.",
+  "fan.pill.kickoff": "Kickoff in 2h 15m",
+  "fan.pill.fastest": "Gate 4 Fastest",
+  "fan.pill.sensory": "Sensory Safe Corridors",
+  "fan.pill.trophy": "Live Trophy Feed",
+  "fan.chat.label": "[ 02 ] AI Copilot Chat",
+  "fan.chat.mapBtn": "Pathfinder AI Map",
+  "wayfinding.findPlaceholder": "Find Destination (Gate 7, Section 104)...",
+  "wayfinding.liveSensor": "Live Sensor Data Active",
+  "wayfinding.activeRoute": "Active Copilot Route",
+  "wayfinding.navigatingTo": "Navigating to",
+  "wayfinding.etaWalk": "min walk",
+  "wayfinding.distance": "Distance",
+  "wayfinding.meters": "meters",
+  "wayfinding.rapidoActive": "✓ Route Rapido Active:",
+  "wayfinding.rapidoDesc": "Corridor density optimized — Step-free express route calculated from Gate 7 to Section 104.",
+  "wayfinding.stepOf": "Step",
+  "wayfinding.nextStep": "Next Step",
+  "wayfinding.exitWayfinding": "Exit Wayfinding",
+  "wayfinding.endRoute": "End Navigation",
 }
 
 const es: Dictionary = {
@@ -351,6 +441,51 @@ const es: Dictionary = {
   "stub.incidents.desc": "Gestión de incidentes de seguridad, localizador de niños perdidos, despacho médico y registro de objetos.",
   "stub.action": "Vista previa del módulo",
   "stub.back": "Volver a Más modos",
+  "gateway.badge": "Copa Mundial FIFA 2026 • Pulso",
+  "gateway.label": "[ 00 ] Portal Multirrol",
+  "gateway.title": "Portal de Operaciones del Estadio",
+  "gateway.subtitle": "Selecciona tu nivel operativo para acceder a telemetría, rutas y asistencia en vivo.",
+  "gateway.fan.label": "[ 01 ] Acceso Público",
+  "gateway.fan.title": "Experiencia del Aficionado",
+  "gateway.fan.desc": "Haz cualquier pregunta. Obtén respuestas multilingües al instante, mapas de calor y rutas asistidas por IA.",
+  "gateway.fan.cta": "Entrar al Portal de Aficionados",
+  "gateway.staff.label": "[ 02 ] Personal de Campo",
+  "gateway.staff.title": "Personal y Voluntarios",
+  "gateway.staff.desc": "Coordinación en tiempo real, rutas accesibles sensoriales y triaje automatizado de incidentes.",
+  "gateway.staff.cta": "Entrar al Portal de Personal",
+  "gateway.command.label": "[ 03 ] Comando Táctico",
+  "gateway.command.title": "Centro de Mando",
+  "gateway.command.desc": "Transmisión de telemetría completa, mapas biométricos de multitudes y monitoreo de niveles DEFCON.",
+  "gateway.command.cta": "Entrar al Centro de Mando",
+  "fan.mode": "Modo Aficionado",
+  "fan.exit": "Salir",
+  "fan.scoreboard.tourney": "Copa Mundial FIFA 2026 · Octavos de final",
+  "fan.scoreboard.fulltime": "Finalizado",
+  "fan.scoreboard.today": "Hoy",
+  "fan.scoreboard.penalties": "Penales: 4-3",
+  "fan.hero.label": "[ 01 ] Atlas Metropolitan Stadium • Copiloto del Aficionado",
+  "fan.hero.title1": "Copiloto para Aficionados",
+  "fan.hero.title2": "Asistente",
+  "fan.hero.desc": "Haz cualquier pregunta. Obtén respuestas instantáneas en varios idiomas, mapas de calor de colas y rutas optimizadas por IA. Basado en las políticas oficiales del estadio para el Mundial 2026.",
+  "fan.pill.kickoff": "Inicio en 2h 15m",
+  "fan.pill.fastest": "Puerta 4 Más rápida",
+  "fan.pill.sensory": "Pasillos Sensorialmente Seguros",
+  "fan.pill.trophy": "Transmisión en Vivo del Trofeo",
+  "fan.chat.label": "[ 02 ] Chat con Copiloto IA",
+  "fan.chat.mapBtn": "Mapa Inteligente de Rutas",
+  "wayfinding.findPlaceholder": "Buscar Destino (Puerta 7, Sección 104)...",
+  "wayfinding.liveSensor": "Datos de Sensor en Vivo Activos",
+  "wayfinding.activeRoute": "Ruta Activa del Copiloto",
+  "wayfinding.navigatingTo": "Navegando a",
+  "wayfinding.etaWalk": "min a pie",
+  "wayfinding.distance": "Distancia",
+  "wayfinding.meters": "metros",
+  "wayfinding.rapidoActive": "✓ Ruta Rápida Activa:",
+  "wayfinding.rapidoDesc": "Densidad de pasillo optimizada — Ruta exprés sin escalones calculada desde la Puerta 7 hasta la Sección 104.",
+  "wayfinding.stepOf": "Paso",
+  "wayfinding.nextStep": "Siguiente Paso",
+  "wayfinding.exitWayfinding": "Salir de Rutas",
+  "wayfinding.endRoute": "Finalizar Navegación",
 }
 
 const fr: Dictionary = {
@@ -467,6 +602,51 @@ const fr: Dictionary = {
   "stub.incidents.desc": "Gestion des incidents de sécurité, protocole enfants perdus et assistance médicale.",
   "stub.action": "Aperçu du module",
   "stub.back": "Retour aux modes",
+  "gateway.badge": "Coupe du Monde FIFA 2026 • Pulse",
+  "gateway.label": "[ 00 ] Portail Multi-Rôle",
+  "gateway.title": "Portail d'Opérations du Stade",
+  "gateway.subtitle": "Sélectionnez votre niveau opérationnel pour accéder à la télémétrie et aux itinéraires en direct.",
+  "gateway.fan.label": "[ 01 ] Accès Public",
+  "gateway.fan.title": "Expérience Supporter",
+  "gateway.fan.desc": "Posez vos questions. Obtenez des réponses multilingues instantanées, cartes de fréquentation et itinéraires optimisés par l'IA.",
+  "gateway.fan.cta": "Accéder au Portail Supporter",
+  "gateway.staff.label": "[ 02 ] Personnel de Terrain",
+  "gateway.staff.title": "Personnel & Bénévoles",
+  "gateway.staff.desc": "Coordination en temps réel, itinéraires sensoriels adaptés et tri automatisé des incidents.",
+  "gateway.staff.cta": "Accéder au Portail Personnel",
+  "gateway.command.label": "[ 03 ] Commandement Tactique",
+  "gateway.command.title": "Centre de Commandement",
+  "gateway.command.desc": "Flux de télémétrie du stade, cartes thermiques biométriques et suivi des niveaux DEFCON.",
+  "gateway.command.cta": "Accéder au Centre de Commandement",
+  "fan.mode": "Mode Supporter",
+  "fan.exit": "Quitter",
+  "fan.scoreboard.tourney": "Coupe du Monde FIFA 2026 · Huitièmes de finale",
+  "fan.scoreboard.fulltime": "Terminé",
+  "fan.scoreboard.today": "Aujourd'hui",
+  "fan.scoreboard.penalties": "Tirs au but : 4-3",
+  "fan.hero.label": "[ 01 ] Atlas Metropolitan Stadium • Copilote Supporter",
+  "fan.hero.title1": "Copiloto Supporter",
+  "fan.hero.title2": "Assistant",
+  "fan.hero.desc": "Posez vos questions. Obtenez des réponses multilingues instantanées, les cartes d'affluence des files d'attente et des itinéraires Pathfinder optimisés par l'IA. Fondé sur les politiques officielles de la Coupe du Monde 2026.",
+  "fan.pill.kickoff": "Coup d'envoi dans 2h 15m",
+  "fan.pill.fastest": "Porte 4 Plus rapide",
+  "fan.pill.sensory": "Couloirs sensoriels apaisés",
+  "fan.pill.trophy": "Flux en direct du Trophée",
+  "fan.chat.label": "[ 02 ] Chat IA Copilote",
+  "fan.chat.mapBtn": "Carte Pathfinder IA",
+  "wayfinding.findPlaceholder": "Rechercher une destination (Porte 7, Section 104)...",
+  "wayfinding.liveSensor": "Capteurs en direct actifs",
+  "wayfinding.activeRoute": "Itinéraire Copilote Actif",
+  "wayfinding.navigatingTo": "Navigation vers",
+  "wayfinding.etaWalk": "min à pied",
+  "wayfinding.distance": "Distance",
+  "wayfinding.meters": "mètres",
+  "wayfinding.rapidoActive": "✓ Itinéraire Rapide Actif :",
+  "wayfinding.rapidoDesc": "Densité des couloirs optimisée — Itinéraire express sans marche calculé de la Porte 7 à la Section 104.",
+  "wayfinding.stepOf": "Étape",
+  "wayfinding.nextStep": "Étape Suivante",
+  "wayfinding.exitWayfinding": "Quitter l'itinéraire",
+  "wayfinding.endRoute": "Terminer la navigation",
 }
 
 const pt: Dictionary = {
@@ -583,6 +763,51 @@ const pt: Dictionary = {
   "stub.incidents.desc": "Abertura de chamados de segurança, localizador de crianças perdidas e assistência médica.",
   "stub.action": "Pré-visualizar módulo",
   "stub.back": "Voltar aos modos",
+  "gateway.badge": "Copa do Mundo FIFA 2026 • Pulso",
+  "gateway.label": "[ 00 ] Portal Multiprofissional",
+  "gateway.title": "Portal de Operações do Estádio",
+  "gateway.subtitle": "Selecione seu nível operacional para acessar telemetria, rotas e assistência em tempo real.",
+  "gateway.fan.label": "[ 01 ] Acesso Público",
+  "gateway.fan.title": "Experiência do Torcedor",
+  "gateway.fan.desc": "Tire suas dúvidas. Obtenha respostas instantâneas, mapas de calor e rotas otimizadas por IA.",
+  "gateway.fan.cta": "Entrar no Portal do Torcedor",
+  "gateway.staff.label": "[ 02 ] Equipe de Campo",
+  "gateway.staff.title": "Equipe & Voluntários",
+  "gateway.staff.desc": "Coordenação em tempo real, rotas sensoriais acessíveis e triagem automatizada de incidentes.",
+  "gateway.staff.cta": "Entrar no Portal da Equipe",
+  "gateway.command.label": "[ 03 ] Comando Tático",
+  "gateway.command.title": "Centro de Comando",
+  "gateway.command.desc": "Transmissão de telemetria completa, mapas biométricos de multidão e monitoramento DEFCON.",
+  "gateway.command.cta": "Entrar no Centro de Comando",
+  "fan.mode": "Modo Torcedor",
+  "fan.exit": "Sair",
+  "fan.scoreboard.tourney": "Copa do Mundo FIFA 2026 · Oitavas de final",
+  "fan.scoreboard.fulltime": "Encerrado",
+  "fan.scoreboard.today": "Hoje",
+  "fan.scoreboard.penalties": "Pênaltis: 4-3",
+  "fan.hero.label": "[ 01 ] Atlas Metropolitan Stadium • Copiloto do Torcedor",
+  "fan.hero.title1": "Copiloto do Torcedor",
+  "fan.hero.title2": "Assistente",
+  "fan.hero.desc": "Faça qualquer pergunta. Obtenha respostas instantâneas multilíngues, mapas de calor ao vivo e rotas otimizadas por IA. Baseado nas políticas oficiais da Copa do Mundo FIFA 2026.",
+  "fan.pill.kickoff": "Início em 2h 15m",
+  "fan.pill.fastest": "Portão 4 Mais rápido",
+  "fan.pill.sensory": "Corredores Sensoriais Seguros",
+  "fan.pill.trophy": "Transmissão ao Vivo do Troféu",
+  "fan.chat.label": "[ 02 ] Chat do Copiloto IA",
+  "fan.chat.mapBtn": "Mapa Pathfinder IA",
+  "wayfinding.findPlaceholder": "Buscar Destino (Portão 7, Setor 104)...",
+  "wayfinding.liveSensor": "Sensores ao Vivo Ativos",
+  "wayfinding.activeRoute": "Rota do Copiloto Ativa",
+  "wayfinding.navigatingTo": "Navegando para",
+  "wayfinding.etaWalk": "min a pé",
+  "wayfinding.distance": "Distância",
+  "wayfinding.meters": "metros",
+  "wayfinding.rapidoActive": "✓ Rota Rápida Ativa:",
+  "wayfinding.rapidoDesc": "Densidade otimizada — Rota expressa calculada do Portão 7 ao Setor 104.",
+  "wayfinding.stepOf": "Passo",
+  "wayfinding.nextStep": "Próximo Passo",
+  "wayfinding.exitWayfinding": "Sair das Rotas",
+  "wayfinding.endRoute": "Encerrar Navegação",
 }
 
 export const DICTIONARIES: Record<Locale, Dictionary> = { en, es, fr, pt }

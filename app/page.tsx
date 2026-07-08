@@ -8,6 +8,7 @@ import { ArrowRight, Lock, Mail, Sparkles, Users, ClipboardList, ShieldAlert } f
 import { toast } from "sonner"
 import { useApp } from "@/lib/state/app-context"
 import { LightRays } from "@/components/ui/light-rays"
+import { LocaleSwitcher } from "@/components/locale-switcher"
 
 /* ─── Framer Motion variants ────────────────────────────────── */
 const containerVariants = {
@@ -45,7 +46,7 @@ const inputCls =
 
 export default function Page() {
   const router = useRouter()
-  const { setRole } = useApp()
+  const { setRole, t } = useApp()
 
   const [staffPassword, setStaffPassword] = useState("")
   const [isStaffLoading, setIsStaffLoading] = useState(false)
@@ -120,19 +121,29 @@ export default function Page() {
       {/* ── z-20: All UI content ── */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-6 flex flex-col items-center">
 
-      {/* ── Branding badge ── */}
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute top-0 left-0 flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
-      >
-        <span className="relative flex size-1.5">
-          <span className="absolute inline-flex size-full rounded-full bg-white opacity-60 animate-pulse-ring" />
-          <span className="relative inline-flex size-1.5 rounded-full bg-white" />
-        </span>
-        <span className="mono-label text-white/70">FIFA World Cup 2026 • Pulse</span>
-      </motion.div>
+      {/* ── Branding badge & Locale Switcher ── */}
+      <div className="w-full flex items-center justify-between mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
+        >
+          <span className="relative flex size-1.5">
+            <span className="absolute inline-flex size-full rounded-full bg-white opacity-60 animate-pulse-ring" />
+            <span className="relative inline-flex size-1.5 rounded-full bg-white" />
+          </span>
+          <span className="mono-label text-white/70">{t("gateway.badge")}</span>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <LocaleSwitcher />
+        </motion.div>
+      </div>
 
       {/* ── Page header ── */}
       <motion.div
@@ -142,12 +153,12 @@ export default function Page() {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 text-center mb-10 max-w-2xl"
       >
-        <p className="mono-label text-white/50 mb-3 justify-center">[ 00 ] Multi-Role Gateway</p>
+        <p className="mono-label text-white/50 mb-3 justify-center">{t("gateway.label")}</p>
         <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-          Stadium Operations Portal
+          {t("gateway.title")}
         </h1>
         <p className="text-sm text-white/60 mt-3 leading-relaxed font-light max-w-md mx-auto">
-          Select your operational tier to access customised telemetry, wayfinding, and live matchday assistance.
+          {t("gateway.subtitle")}
         </p>
       </motion.div>
 
@@ -171,10 +182,10 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/10 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <Users className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">[ 01 ] Public Access</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">Fan Experience</h2>
+            <p className="mono-label text-white/50 mb-1">{t("gateway.fan.label")}</p>
+            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.fan.title")}</h2>
             <p className="text-xs text-white/65 leading-relaxed font-light">
-              Ask any question. Get instant, multilingual answers, live queue heatmaps, and AI-optimised Pathfinder routing.
+              {t("gateway.fan.desc")}
             </p>
           </div>
           <div className="mt-8 pt-5 border-t border-white/8">
@@ -183,10 +194,9 @@ export default function Page() {
               whileTap={{ scale: 0.97 }}
               className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-white/20 text-white text-xs font-medium uppercase tracking-widest font-mono hover:bg-white hover:text-black hover:border-white transition-all duration-300 cursor-pointer"
             >
-              <span>Enter Matchday</span>
+              <span>{t("gateway.fan.cta")}</span>
               <ArrowRight className="size-3.5" />
             </motion.button>
-            <p className="mono-label text-white/30 text-center mt-3">No credentials required</p>
           </div>
         </motion.div>
 
@@ -202,10 +212,10 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/10 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <ClipboardList className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">[ 02 ] Volunteer & Ops</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">Staff Operations</h2>
+            <p className="mono-label text-white/50 mb-1">{t("gateway.staff.label")}</p>
+            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.staff.title")}</h2>
             <p className="text-xs text-white/65 leading-relaxed font-light">
-              Assigned task checklists, incident reporting, crowd flow monitoring, and ground team coordination copilot.
+              {t("gateway.staff.desc")}
             </p>
           </div>
           <form onSubmit={handleStaffLogin} className="mt-8 pt-5 border-t border-white/8 flex flex-col gap-3">
@@ -228,7 +238,7 @@ export default function Page() {
             >
               {isStaffLoading
                 ? <><Sparkles className="size-3.5 animate-spin" /><span>Verifying...</span></>
-                : <><span>Staff & Volunteer Ops</span><ArrowRight className="size-3.5" /></>}
+                : <><span>{t("gateway.staff.cta")}</span><ArrowRight className="size-3.5" /></>}
             </motion.button>
           </form>
         </motion.div>
@@ -254,10 +264,10 @@ export default function Page() {
             <div className="size-11 rounded-md bg-white/8 border border-white/15 flex items-center justify-center text-white mb-5 transition-all duration-300 group-hover:bg-white/15">
               <ShieldAlert className="size-5" />
             </div>
-            <p className="mono-label text-white/50 mb-1">[ 03 ] DEFCON Telemetry</p>
-            <h2 className="text-xl font-semibold text-white mb-2.5">Command Center</h2>
+            <p className="mono-label text-white/50 mb-1">{t("gateway.command.label")}</p>
+            <h2 className="text-xl font-semibold text-white mb-2.5">{t("gateway.command.title")}</h2>
             <p className="text-xs text-white/65 leading-relaxed font-light">
-              Full stadium biometric telemetry, automated drone overrides, DEFCON incident response, and emergency broadcast triggers.
+              {t("gateway.command.desc")}
             </p>
           </div>
           <form onSubmit={handleCommandLogin} className="relative z-10 mt-6 pt-5 border-t border-white/8 flex flex-col gap-3">

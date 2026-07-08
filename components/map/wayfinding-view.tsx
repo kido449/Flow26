@@ -313,7 +313,7 @@ export function WayfindingView() {
             <Search className="size-4 text-primary shrink-0" />
             <input
               type="text"
-              placeholder="Find Destination (Gate 7, Section 104)..."
+              placeholder={t("wayfinding.findPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none w-full font-sans"
@@ -370,7 +370,7 @@ export function WayfindingView() {
             <span className="relative inline-flex size-2 rounded-full bg-primary" />
           </span>
           <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/90 font-medium">
-            Live Sensor Data Active
+            {t("wayfinding.liveSensor")}
           </span>
         </div>
       </div>
@@ -394,10 +394,10 @@ export function WayfindingView() {
                   </div>
                   <div>
                     <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary font-bold block">
-                      Active Copilot Route
+                      {t("wayfinding.activeRoute")}
                     </span>
                     <h2 className="text-lg font-serif font-bold tracking-tight text-white leading-tight mt-0.5">
-                      Navigating to {toPoi?.label || "Section 104"}
+                      {t("wayfinding.navigatingTo")} {toPoi?.label || "Section 104"}
                     </h2>
                   </div>
                 </div>
@@ -411,19 +411,19 @@ export function WayfindingView() {
                 <div className="bg-neutral-800/60 rounded-2xl p-3.5 border border-white/5 flex flex-col justify-center">
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 flex items-center gap-1">
                     <Clock className="size-3 text-primary" />
-                    Estimated ETA
+                    ETA
                   </span>
                   <span className="text-2xl font-serif font-bold text-white mt-1 tabular-nums">
-                    {etaMinutes} min walk
+                    {etaMinutes} {t("wayfinding.etaWalk")}
                   </span>
                 </div>
                 <div className="bg-neutral-800/60 rounded-2xl p-3.5 border border-white/5 flex flex-col justify-center">
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 flex items-center gap-1">
                     <MapPin className="size-3 text-primary" />
-                    Distance
+                    {t("wayfinding.distance")}
                   </span>
                   <span className="text-2xl font-serif font-bold text-white mt-1 tabular-nums">
-                    {distanceMeters} meters
+                    {distanceMeters} {t("wayfinding.meters")}
                   </span>
                 </div>
               </div>
@@ -433,23 +433,23 @@ export function WayfindingView() {
                 <AlertTriangle className="size-4 shrink-0 mt-0.5 text-primary" />
                 <div className="font-sans leading-snug">
                   <strong className="uppercase font-mono tracking-wider mr-1.5 font-bold text-primary">
-                    ✓ Route Rapido Active:
+                    {t("wayfinding.rapidoActive")}
                   </strong>
-                  Corridor density optimized — Step-free express route calculated from Gate 7 to Section 104.
+                  {t("wayfinding.rapidoDesc")}
                 </div>
               </div>
 
               {/* Step-by-Step Instruction Area */}
               <div className="bg-neutral-800/50 rounded-2xl p-4 border border-white/5 flex flex-col gap-2.5 shrink-0">
                 <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-white/50 border-b border-white/5 pb-2">
-                  <span>Step {currentStepIndex + 1} of {steps.length}</span>
+                  <span>{t("wayfinding.stepOf")} {currentStepIndex + 1} / {steps.length}</span>
                   {currentStepIndex < steps.length - 1 && (
                     <button
                       type="button"
                       onClick={() => setCurrentStepIndex((i) => Math.min(steps.length - 1, i + 1))}
                       className="text-primary hover:underline font-bold flex items-center gap-1 cursor-pointer"
                     >
-                      <span>Next Step</span>
+                      <span>{t("wayfinding.nextStep")}</span>
                       <ArrowUpRight className="size-3" />
                     </button>
                   )}

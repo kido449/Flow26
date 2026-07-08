@@ -15,9 +15,9 @@ export default function FanLayout({ children }: { children: React.ReactNode }) {
   const { t } = useApp()
 
   const navItems = [
-    { href: "/fan", icon: Home, label: "Home" },
-    { href: "/fan/assistant", icon: MessageSquare, label: "Copilot" },
-    { href: "/fan/wayfinding", icon: Map, label: "Pathfinder AI" },
+    { href: "/fan", icon: Home, label: t("nav.home") },
+    { href: "/fan/assistant", icon: MessageSquare, label: t("nav.assistant") },
+    { href: "/fan/wayfinding", icon: Map, label: t("nav.wayfinding") },
   ]
 
   return (
@@ -46,7 +46,7 @@ export default function FanLayout({ children }: { children: React.ReactNode }) {
               <span className="text-sm font-semibold tracking-tight text-foreground">{t("app.name")}</span>
             </Link>
             <div className="divider h-4 w-px bg-border" />
-            <span className="mono-label">[ 01 ] Fan Mode</span>
+            <span className="mono-label">[ 01 ] {t("fan.mode")}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function FanLayout({ children }: { children: React.ReactNode }) {
               className="pill-btn text-muted-foreground ml-2"
             >
               <LogOut className="size-3" />
-              <span className="hidden sm:inline">Exit</span>
+              <span className="hidden sm:inline">{t("fan.exit")}</span>
             </Link>
           </div>
         </header>
