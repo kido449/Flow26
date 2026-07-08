@@ -4,46 +4,74 @@ import { useEffect } from "react"
 
 export function PreventZoom() {
   useEffect(() => {
-    // 1. Prevent trackpad pinch-to-zoom and Ctrl + MouseWheel zoom
+    // 1. Intercept wheel/trackpad pinch zoom on Windows & macOS in capture phase
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
       }
     }
 
-    // 2. Prevent keyboard shortcut zooming (Ctrl/Cmd + '+', '-', '=', '0')
+    // 2. Intercept keyboard zoom shortcuts (Ctrl/Cmd + +, -, =, 0, Numpad)
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && ["+", "-", "=", "0"].includes(e.key)) {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        ["+", "-", "=", "0", "Add", "Subtract", "_"].includes(e.key)
+      ) {
         e.preventDefault()
+        e.stopPropagation()
       }
     }
 
-    // 3. Prevent Safari trackpad/touch gesture zooming
+    // 3. Intercept Safari & precision touchpad gesture events
     const handleGesture = (e: Event) => {
       e.preventDefault()
+      e.stopPropagation()
     }
 
-    // 4. Prevent multi-finger touch pinch-to-zoom on touch devices
+    // 4. Intercept multi-finger touch pinch-to-zoom
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches && e.touches.length > 1) {
         e.preventDefault()
       }
     }
 
-    window.addEventListener("wheel", handleWheel, { passive: false })
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("gesturestart", handleGesture)
-    window.addEventListener("gesturechange", handleGesture)
-    window.addEventListener("gestureend", handleGesture)
-    window.addEventListener("touchmove", handleTouchMove, { passive: false })
+    const opts = { passive: false, capture: true }
+
+    // Attach to both document and window in capture phase
+    window.addEventListener("wheel", handleWheel, opts)
+    document.addEventListener("wheel", handleWheel, opts)
+
+    window.addEventListener("keydown", handleKeyDown, { capture: true })
+    document.addEventListener("keydown", handleKeyDown, { capture: true })
+
+    window.addEventListener("gesturestart", handleGesture, opts)
+    window.addEventListener("gesturechange", handleGesture, opts)
+    window.addEventListener("gestureend", handleGesture, opts)
+    document.addEventListener("gesturestart", handleGesture, opts)
+    document.addEventListener("gesturechange", handleGesture, opts)
+    document.addEventListener("gestureend", handleGesture, opts)
+
+    window.addEventListener("touchmove", handleTouchMove, opts)
+    document.addEventListener("touchmove", handleTouchMove, opts)
 
     return () => {
-      window.removeEventListener("wheel", handleWheel)
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("gesturestart", handleGesture)
-      window.removeEventListener("gesturechange", handleGesture)
-      window.removeEventListener("gestureend", handleGesture)
-      window.removeEventListener("touchmove", handleTouchMove)
+      window.removeEventListener("wheel", handleWheel, true)
+      document.removeEventListener("wheel", handleWheel, true)
+
+      window.removeEventListener("keydown", handleKeyDown, true)
+      document.removeEventListener("keydown", handleKeyDown, true)
+
+      window.removeEventListener("gesturestart", handleGesture, true)
+      window.removeEventListener("gesturechange", handleGesture, true)
+      window.removeEventListener("gestureend", handleGesture, true)
+      document.removeEventListener("gesturestart", handleGesture, true)
+      document.removeEventListener("gesturechange", handleGesture, true)
+      document.removeEventListener("gestureend", handleGesture, true)
+
+      window.removeEventListener("touchmove", handleTouchMove, true)
+      document.removeEventListener("touchmove", handleTouchMove, true)
     }
   }, [])
 
