@@ -305,204 +305,121 @@ export function WayfindingView() {
         </div>
       </div>
 
-      {/* 2. THE TOP OVERLAYS (Search Pill & Live Status - pointer-events-none wrapper) */}
-      <div className="absolute top-24 md:top-6 left-0 right-0 z-10 pointer-events-none px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto gap-3">
-        {/* Floating Glass Search Pill */}
-        <div className="relative w-full sm:w-80 pointer-events-auto">
-          <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/20">
-            <Search className="size-4 text-primary shrink-0" />
-            <input
-              type="text"
-              placeholder={t("wayfinding.findPlaceholder")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none w-full font-sans"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="text-white/40 hover:text-white transition-colors cursor-pointer"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
+      {/* 2. THE TOP OVERLAYS (Search Pill & Live Status - shown only when not actively navigating) */}
+      {!isNavigating && (
+        <div className="absolute top-24 md:top-6 left-0 right-0 z-10 pointer-events-none px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto gap-3">
+          {/* Floating Glass Search Pill */}
+          <div className="relative w-full sm:w-80 pointer-events-auto">
+            <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/20">
+              <Search className="size-4 text-primary shrink-0" />
+              <input
+                type="text"
+                placeholder={t("wayfinding.findPlaceholder")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none w-full font-sans"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="text-white/40 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="size-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Search Results Dropdown */}
+            <AnimatePresence>
+              {searchQuery && matchingPois.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full mt-2 w-full bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 shadow-2xl max-h-60 overflow-y-auto z-50 divide-y divide-white/5"
+                >
+                  {matchingPois.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => handleSelectPoi(p.id)}
+                      className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-neutral-800 text-left transition-colors cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <MapPin className="size-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                        <div>
+                          <div className="text-xs font-semibold text-white font-mono uppercase tracking-wider">{p.label}</div>
+                          <div className="text-[10px] text-white/40 font-sans capitalize">{p.kind} • {p.zoneId.replace("z-", "")}</div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                        Navigate
+                      </span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Search Results Dropdown */}
-          <AnimatePresence>
-            {searchQuery && matchingPois.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-full mt-2 w-full bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 shadow-2xl max-h-60 overflow-y-auto z-50 divide-y divide-white/5"
-              >
-                {matchingPois.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleSelectPoi(p.id)}
-                    className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-neutral-800 text-left transition-colors cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <MapPin className="size-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                      <div>
-                        <div className="text-xs font-semibold text-white font-mono uppercase tracking-wider">{p.label}</div>
-                        <div className="text-[10px] text-white/40 font-sans capitalize">{p.kind} • {p.zoneId.replace("z-", "")}</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                      Navigate
-                    </span>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Live Sensor Status Badge */}
+          <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl pointer-events-auto shrink-0">
+            <span className="relative flex size-2 shrink-0">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+            <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/90 font-medium">
+              {t("wayfinding.liveSensor")}
+            </span>
+          </div>
         </div>
+      )}
 
-        {/* Live Sensor Status Badge */}
-        <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl pointer-events-auto shrink-0">
-          <span className="relative flex size-2 shrink-0">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-primary" />
-          </span>
-          <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/90 font-medium">
-            {t("wayfinding.liveSensor")}
-          </span>
-        </div>
-      </div>
-
-      {/* 3. THE BOTTOM OVERLAY (The Route Card Fix - Pinned to bottom, max-h-[50vh], center 50% empty) */}
+      {/* 3. SLEEK BOTTOM NAVIGATION BAR — map only visible, navigation bar at bottom */}
       <AnimatePresence>
         {isNavigating && (
-          <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-10 pointer-events-none">
+          <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl z-20 pointer-events-none">
             <motion.div
               initial={{ y: 80, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 80, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full max-h-[50vh] overflow-y-auto bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-3xl p-5 shadow-2xl flex flex-col gap-4 text-white pointer-events-auto scrollbar-thin scrollbar-thumb-white/10"
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-3 sm:px-5 sm:py-3.5 shadow-2xl flex items-center justify-between gap-4 text-white pointer-events-auto"
             >
-              {/* Top Destination Title Bar */}
-              <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3.5 shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0 shadow-inner">
-                    <Navigation className="size-5 text-primary animate-pulse" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-primary font-bold block">
-                      {t("wayfinding.activeRoute")}
+              {/* Left: Destination & Step info */}
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="size-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0 shadow-inner">
+                  <Navigation className="size-5 text-primary animate-pulse" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-semibold text-white truncate font-sans">
+                      {toPoi?.label || "Section 104"}
                     </span>
-                    <h2 className="text-lg font-serif font-bold tracking-tight text-white leading-tight mt-0.5">
-                      {t("wayfinding.navigatingTo")} {toPoi?.label || "Section 104"}
-                    </h2>
+                    <span className="text-[10px] font-mono uppercase tracking-wider bg-primary/20 text-primary px-2 py-0.5 rounded-full shrink-0 font-bold">
+                      {etaMinutes} {t("wayfinding.etaWalk")}
+                    </span>
                   </div>
-                </div>
-                <span className="text-[10px] font-mono uppercase tracking-[0.15em] bg-neutral-800 border border-white/10 px-2.5 py-1 rounded-full text-white/70 shrink-0">
-                  {toPoi?.kind || "seat"}
-                </span>
-              </div>
-
-              {/* Big ETA & Distance Row */}
-              <div className="grid grid-cols-2 gap-3 shrink-0">
-                <div className="bg-neutral-800/60 rounded-2xl p-3.5 border border-white/5 flex flex-col justify-center">
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 flex items-center gap-1">
-                    <Clock className="size-3 text-primary" />
-                    ETA
-                  </span>
-                  <span className="text-2xl font-serif font-bold text-white mt-1 tabular-nums">
-                    {etaMinutes} {t("wayfinding.etaWalk")}
-                  </span>
-                </div>
-                <div className="bg-neutral-800/60 rounded-2xl p-3.5 border border-white/5 flex flex-col justify-center">
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 flex items-center gap-1">
-                    <MapPin className="size-3 text-primary" />
-                    {t("wayfinding.distance")}
-                  </span>
-                  <span className="text-2xl font-serif font-bold text-white mt-1 tabular-nums">
-                    {distanceMeters} {t("wayfinding.meters")}
-                  </span>
-                </div>
-              </div>
-
-              {/* Live Crowd Warning Badge */}
-              <div className="flex items-start gap-2.5 rounded-2xl p-3 text-xs border bg-primary/10 border-primary/30 text-white/90 shrink-0">
-                <AlertTriangle className="size-4 shrink-0 mt-0.5 text-primary" />
-                <div className="font-sans leading-snug">
-                  <strong className="uppercase font-mono tracking-wider mr-1.5 font-bold text-primary">
-                    {t("wayfinding.rapidoActive")}
-                  </strong>
-                  {t("wayfinding.rapidoDesc")}
-                </div>
-              </div>
-
-              {/* Step-by-Step Instruction Area */}
-              <div className="bg-neutral-800/50 rounded-2xl p-4 border border-white/5 flex flex-col gap-2.5 shrink-0">
-                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-white/50 border-b border-white/5 pb-2">
-                  <span>{t("wayfinding.stepOf")} {currentStepIndex + 1} / {steps.length}</span>
-                  {currentStepIndex < steps.length - 1 && (
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStepIndex((i) => Math.min(steps.length - 1, i + 1))}
-                      className="text-primary hover:underline font-bold flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>{t("wayfinding.nextStep")}</span>
-                      <ArrowUpRight className="size-3" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Current Step in Bold White */}
-                <div className="flex items-start gap-3 mt-0.5">
-                  <span className="size-6 rounded-full bg-primary text-primary-foreground text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-primary/20">
-                    {currentStepIndex + 1}
-                  </span>
-                  <p className="text-base font-bold text-white leading-snug font-sans">
-                    {currentStep?.instruction}
+                  <p className="text-xs text-white/70 truncate font-sans mt-0.5">
+                    {currentStep?.instruction || "Proceed along step-free express concourse"}
                   </p>
                 </div>
-
-                {/* Next Step in Muted text-white/40 */}
-                {nextStep && (
-                  <div className="pl-9 pt-1 flex items-start gap-1.5 text-xs text-white/40 font-sans leading-relaxed border-t border-white/5 mt-1.5">
-                    <span className="font-mono uppercase text-[10px] tracking-wider text-primary font-semibold shrink-0">
-                      Then:
-                    </span>
-                    <span>{nextStep.instruction}</span>
-                  </div>
-                )}
               </div>
 
-              {/* Prominent Gold Action Button Row */}
-              <div className="grid grid-cols-2 gap-3 pt-1 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    toast.success("Navigation completed. Arrived at Section 104!")
-                    setIsNavigating(false)
-                  }}
-                  className="w-full py-3.5 px-4 rounded-full bg-primary text-primary-foreground font-mono uppercase tracking-[0.15em] text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 cursor-pointer flex items-center justify-center gap-2 scale-100 hover:scale-[1.02]"
-                >
-                  <CheckCircle2 className="size-4" />
-                  <span>End Navigation</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    toast.info("Obstacle reported! Recalculating alternative step-free concourse...")
-                    if (currentStepIndex < steps.length - 1) {
-                      setCurrentStepIndex((i) => i + 1)
-                    }
-                  }}
-                  className="w-full py-3.5 px-4 rounded-full bg-neutral-800 text-white/90 border border-white/10 font-mono uppercase tracking-[0.15em] text-xs font-semibold hover:bg-neutral-700 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 scale-100 hover:scale-[1.02]"
-                >
-                  <AlertTriangle className="size-4 text-primary" />
-                  <span>Report Blocked</span>
-                </button>
-              </div>
+              {/* Right: End Navigation Button Down at the Bottom */}
+              <button
+                type="button"
+                onClick={() => {
+                  toast.success("Navigation completed. Arrived at destination!")
+                  setIsNavigating(false)
+                }}
+                className="shrink-0 px-4 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono uppercase tracking-widest text-xs font-bold transition-all shadow-lg shadow-red-600/30 cursor-pointer flex items-center gap-2"
+              >
+                <X className="size-3.5" />
+                <span>End Navigation</span>
+              </button>
             </motion.div>
           </div>
         )}
