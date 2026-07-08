@@ -167,7 +167,7 @@ export type TranslationKey =
 type Dictionary = Record<TranslationKey, string>
 
 const en: Dictionary = {
-  "app.name": "Tournament Copilot",
+  "app.name": "Pulse (Flow26)",
   "app.tagline": "Your matchday guide",
   "nav.home": "Home",
   "nav.assistant": "Assistant",
@@ -328,7 +328,7 @@ const en: Dictionary = {
 }
 
 const es: Dictionary = {
-  "app.name": "Tournament Copilot",
+  "app.name": "Pulse (Flow26)",
   "app.tagline": "Tu guía del partido",
   "nav.home": "Inicio",
   "nav.assistant": "Asistente",
@@ -489,7 +489,7 @@ const es: Dictionary = {
 }
 
 const fr: Dictionary = {
-  "app.name": "Tournament Copilot",
+  "app.name": "Pulse (Flow26)",
   "app.tagline": "Votre guide du match",
   "nav.home": "Accueil",
   "nav.assistant": "Assistant",
@@ -650,7 +650,7 @@ const fr: Dictionary = {
 }
 
 const pt: Dictionary = {
-  "app.name": "Tournament Copilot",
+  "app.name": "Pulse (Flow26)",
   "app.tagline": "Seu guia de jogo",
   "nav.home": "Início",
   "nav.assistant": "Assistente",

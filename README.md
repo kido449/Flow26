@@ -1,4 +1,4 @@
-# 🏆 Tournament Copilot — FIFA World Cup 2026
+# 🏆 Pulse (Flow26) — FIFA World Cup 2026
 
 An enterprise-grade, role-based, multilingual matchday copilot and stadium operations platform built for the **FIFA World Cup 2026**.
 

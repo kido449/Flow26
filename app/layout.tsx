@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Tournament Copilot — FIFA World Cup 2026",
+  title: "Pulse (Flow26) — FIFA World Cup 2026",
   description:
     "A role-based, multilingual matchday copilot for FIFA World Cup 2026: grounded stadium assistant, wayfinding, and live crowd awareness.",
   generator: "v0.app",

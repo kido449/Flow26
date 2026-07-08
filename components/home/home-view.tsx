@@ -56,10 +56,10 @@ export function HomeView() {
         <div className="lg:col-span-7 flex flex-col gap-4">
           <div className="flex items-center gap-2.5 font-mono uppercase tracking-[0.3em] text-xs text-primary">
             <MapPin className="size-3.5 text-primary shrink-0" />
-            <span>{STADIUM_NAME} • organic intelligence copilot</span>
+            <span>{STADIUM_NAME} • pulse (flow26)</span>
           </div>
           <h1 className="text-5xl sm:text-7xl lg:text-[7vw] font-serif font-bold tracking-tight text-foreground leading-[0.92]">
-            fifa world cup <span className="italic font-normal text-primary">copilot</span>
+            Pulse <span className="italic font-normal text-primary">(Flow26)</span>
           </h1>
           <p className="text-lg text-foreground/80 max-w-xl leading-relaxed font-sans mt-2">{t("home.subtitle")}</p>
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.25em] text-muted-foreground mt-1">
