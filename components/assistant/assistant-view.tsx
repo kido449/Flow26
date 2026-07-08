@@ -36,7 +36,7 @@ export function AssistantView() {
   const hasMessages = messages.length > 0
 
   return (
-    <div className="flex h-[calc(100dvh-14rem)] md:h-[calc(100dvh-14rem)] flex-col gap-5">
+    <div className="flex h-full flex-1 flex-col gap-4 overflow-hidden">
 
       {/* Header */}
       <header className="flex flex-col gap-1 pb-4 border-b border-border">
@@ -132,7 +132,7 @@ export function AssistantView() {
       </div>
 
       {/* Composer */}
-      <div className="flex items-center gap-2 pt-2 border-t border-border">
+      <div className="flex items-center gap-2 pt-3 border-t border-border/80">
         <div className="flex-1 relative">
           <Textarea
             value={input}
@@ -140,7 +140,7 @@ export function AssistantView() {
             onKeyDown={handleKeyDown}
             placeholder="e.g. Where is the nearest accessible restroom to Gate 7?"
             rows={1}
-            className="w-full max-h-32 min-h-11 resize-none bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground px-4 py-3 text-sm focus:outline-none focus:border-foreground/50 transition-colors scrollbar-hide rounded-lg font-light"
+            className="w-full h-12 min-h-12 max-h-24 resize-none bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground px-4 py-3 text-sm focus:outline-none focus:border-foreground/50 transition-colors scrollbar-hide rounded-xl font-normal leading-normal"
             aria-label={t("assistant.placeholder")}
           />
         </div>
@@ -148,7 +148,7 @@ export function AssistantView() {
           onClick={submit}
           disabled={!input.trim() || isStreaming}
           size="icon"
-          className="size-11 shrink-0 bg-foreground text-background rounded-lg hover:bg-foreground/80 transition-colors font-medium cursor-pointer disabled:opacity-40 shadow-none"
+          className="size-12 shrink-0 bg-foreground text-background rounded-xl hover:bg-foreground/80 transition-colors font-medium cursor-pointer disabled:opacity-40 shadow-none"
         >
           <Send className="size-4" />
           <span className="sr-only">{t("assistant.send")}</span>
