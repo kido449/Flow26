@@ -5,22 +5,17 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   Navigation,
   MapPin,
-  Clock,
   Search,
   X,
   ArrowUpRight,
-  CheckCircle2,
   AlertTriangle,
   ZoomIn,
   ZoomOut,
   RotateCcw,
 } from "lucide-react"
 import { toast } from "sonner"
-import { getMapService } from "@/lib/services/map-service"
 import { useLiveSnapshot } from "@/hooks/use-live-snapshot"
 import { useApp } from "@/lib/state/app-context"
-import { cn } from "@/lib/utils"
-import type { Congestion } from "@/lib/types"
 
 // Extended POI definitions including Gate 7 and Section 104 for the Rapido route
 const RAPIDO_POIS = [
@@ -36,9 +31,19 @@ const RAPIDO_POIS = [
   { id: "med-1", kind: "medical", label: "Emergency Medical Center", x: 350, y: 260, zoneId: "z-north" },
 ]
 
+function getCongestionPenalty(level?: string): number {
+  if (level === "critical") return 5
+  if (level === "high") return 3
+  if (level === "moderate") return 1
+  return 0
+}
+
+function getZonePct(zone?: { occupancy: number; capacity: number }): number {
+  return zone && zone.capacity > 0 ? Math.round((zone.occupancy / zone.capacity) * 100) : 0
+}
+
 export function WayfindingView() {
   const { t, role } = useApp()
-  const mapService = getMapService()
   const { snapshot } = useLiveSnapshot()
 
   const [fromId, setFromId] = useState<string>("gate-7")
@@ -48,21 +53,14 @@ export function WayfindingView() {
   const [isNavigating, setIsNavigating] = useState<boolean>(false)
   const [zoomLevel, setZoomLevel] = useState<number>(1)
 
-  // Compute real route using map service
-  const route = useMemo(() => {
-    return mapService.computeRoute(fromId, toId)
-  }, [fromId, toId, mapService])
-
-  // Get POI objects for from and to (prefer mapService data, fallback to RAPIDO_POIS)
   const toPoi = useMemo(() => {
-    return mapService.getPoi(toId) || RAPIDO_POIS.find((p) => p.id === toId) || RAPIDO_POIS[1]
-  }, [toId, mapService])
+    return RAPIDO_POIS.find((p) => p.id === toId) || RAPIDO_POIS[1]
+  }, [toId])
 
   const fromPoi = useMemo(() => {
-    return mapService.getPoi(fromId) || RAPIDO_POIS.find((p) => p.id === fromId) || RAPIDO_POIS[0]
-  }, [fromId, mapService])
+    return RAPIDO_POIS.find((p) => p.id === fromId) || RAPIDO_POIS[0]
+  }, [fromId])
 
-  // Reset step index whenever route changes
   useEffect(() => {
     setCurrentStepIndex(0)
   }, [fromId, toId])
@@ -78,10 +76,8 @@ export function WayfindingView() {
     )
   }, [searchQuery])
 
-  // Map constraints reference for drag
   const mapContainerRef = useRef<HTMLDivElement>(null)
 
-  // Function to handle POI selection
   function handleSelectPoi(id: string) {
     if (id === fromId) return
     setToId(id)
@@ -92,7 +88,6 @@ export function WayfindingView() {
     toast.success(`Route calculated to ${p?.label || "destination"}`)
   }
 
-  // Function to swap from and to points
   function handleSwapPoints() {
     setToId(fromId)
     setFromId(toId)
@@ -101,69 +96,46 @@ export function WayfindingView() {
     toast.info("Swapped start and destination points")
   }
 
-  // Get congestion data for zones in the route
-  const routeZoneCongestion = useMemo(() => {
-    if (!snapshot) return new Map<string, Congestion>()
-
-    const congestionMap = new Map(snapshot.zones.map((z) => [z.id, z.congestion]))
-    const zoneCongestion = new Map<string, Congestion>()
-
-    const zones = route?.zoneIds && route.zoneIds.length > 0
-      ? route.zoneIds
-      : [fromPoi?.zoneId || "z-west", toPoi?.zoneId || "z-north"]
-
-    zones.forEach((zoneId) => {
-      const congestion = congestionMap.get(zoneId)
-      zoneCongestion.set(zoneId, congestion ?? "low")
-    })
-
-    return zoneCongestion
-  }, [route, snapshot, fromPoi, toPoi])
-
-  // Determine if route crosses congested zones
-  const hasCongestionWarning = useMemo(() => {
-    return Array.from(routeZoneCongestion.values()).some(
-      (congestion) => congestion === "high" || congestion === "critical"
-    )
-  }, [routeZoneCongestion])
-
   const distanceMeters = useMemo(() => {
     if (!fromPoi || !toPoi) return 340
     return Math.max(50, Math.round(Math.hypot(toPoi.x - fromPoi.x, toPoi.y - fromPoi.y)))
   }, [fromPoi, toPoi])
 
-  // Use dynamic ETA from route + live snapshot congestion penalty
+  const fromZone = useMemo(() => {
+    return snapshot?.zones.find((z) => z.id === fromPoi?.zoneId)
+  }, [snapshot, fromPoi])
+
+  const toZone = useMemo(() => {
+    return snapshot?.zones.find((z) => z.id === toPoi?.zoneId)
+  }, [snapshot, toPoi])
+
   const etaMinutes = useMemo(() => {
-    const baseMinutes = route?.estimatedMinutes ?? Math.max(2, Math.round(distanceMeters / 80))
-    const livePenalty = hasCongestionWarning ? 2 : 0
-    return baseMinutes + livePenalty
-  }, [route, distanceMeters, hasCongestionWarning])
+    const baseMinutes = Math.max(3, Math.round(distanceMeters / 80))
+    const fromPenalty = getCongestionPenalty(fromZone?.congestion)
+    const toPenalty = getCongestionPenalty(toZone?.congestion)
+    return baseMinutes + fromPenalty + toPenalty
+  }, [distanceMeters, fromZone, toZone])
 
-  // Generate dynamic steps from route data
-  const dynamicSteps = useMemo(() => {
-    if (!route) return []
-    return route.steps.map((step, index) => ({
-      instruction: index === 0
-        ? `Start at ${step.poiId === fromPoi?.id ? fromPoi.label : mapService.getPoi(step.poiId)?.label || step.poiId}`
-        : index === route.steps.length - 1
-          ? `Arrive at ${step.poiId === toPoi?.id ? toPoi.label : mapService.getPoi(step.poiId)?.label || step.poiId}`
-          : step.instruction
-    }))
-  }, [route, fromPoi, toPoi, mapService])
+  const isCongested = useMemo(() => {
+    return (
+      fromZone?.congestion === "high" ||
+      fromZone?.congestion === "critical" ||
+      toZone?.congestion === "high" ||
+      toZone?.congestion === "critical"
+    )
+  }, [fromZone, toZone])
 
-  // Dynamic path data
   const rapidoPathD = "M 180 450 L 260 450 C 260 300, 350 180, 500 180 L 680 180 L 750 250"
 
-  // Exact coordinate waypoints for the live tracking beacon animation
   const trackingX = [180, 260, 280, 340, 420, 500, 600, 680, 715, 750]
   const trackingY = [450, 450, 360, 260, 200, 180, 180, 180, 215, 250]
 
-  const steps = dynamicSteps.length > 0 ? dynamicSteps : [
-    { instruction: "Start at Gate 7 (West Entrance Plaza) after security screening." },
+  const steps = [
+    { instruction: `Start at ${fromPoi?.label || "Gate 7"} after security screening.` },
     { instruction: "Walk straight along the West Concourse past the FIFA Gourmet Lounge." },
     { instruction: "Turn right and follow the curved corridor into the North Concourse." },
     { instruction: "Continue straight along North Concourse past Restroom Block N." },
-    { instruction: "Turn right into Portal 104 tunnel to access your seating section." },
+    { instruction: `Arrive at ${toPoi?.label || "Section 104"} to access your seating section.` },
   ]
 
   const currentStep = steps[currentStepIndex]
@@ -173,10 +145,8 @@ export function WayfindingView() {
     <div className="fixed inset-0 h-dvh w-dvw z-20 bg-black overflow-hidden select-none selection:bg-primary/30 selection:text-white">
       {/* 1. THE MAP LAYER (Background - Absolute Full Screen z-0) */}
       <div ref={mapContainerRef} className="absolute inset-0 h-screen w-screen z-0 overflow-hidden bg-black flex items-center justify-center">
-        {/* Spatial background blueprint dots */}
         <div className="absolute inset-0 bg-[radial-gradient(#262626_1.5px,transparent_1.5px)] [background-size:24px_24px] pointer-events-none opacity-40" />
 
-        {/* Interactive Drag & Zoom Workspace */}
         <motion.div
           drag
           dragConstraints={{ left: -600, right: 600, top: -500, bottom: 500 }}
@@ -204,21 +174,13 @@ export function WayfindingView() {
             </defs>
 
             {/* --- STADIUM ARCHITECTURE (Minimalist Geometric Shapes) --- */}
-
-            {/* Outer Stadium Facade & Walkway Ring */}
             <rect x="100" y="50" width="1000" height="800" rx="200" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
             <rect x="140" y="80" width="920" height="740" rx="170" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="3" strokeDasharray="12 12" />
 
-            {/* Upper Seating Tier (Segmented Ring) */}
             <rect x="180" y="110" width="840" height="680" rx="150" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.12)" strokeWidth="4" />
-
-            {/* Club Level / Concourse Corridor Ring */}
             <rect x="250" y="170" width="700" height="560" rx="110" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
-
-            {/* Lower Seating Tier Ring */}
             <rect x="320" y="230" width="560" height="440" rx="80" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.15)" strokeWidth="3" />
 
-            {/* Radial Section Divider Lines */}
             <line x1="320" y1="230" x2="180" y2="110" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
             <line x1="880" y1="230" x2="1020" y2="110" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
             <line x1="320" y1="670" x2="180" y2="790" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
@@ -228,30 +190,23 @@ export function WayfindingView() {
             <line x1="320" y1="450" x2="100" y2="450" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
             <line x1="880" y1="450" x2="1100" y2="450" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
 
-            {/* --- PITCH AREA (Very faint dark green fill="#0a1a0f") --- */}
             <rect x="400" y="290" width="400" height="320" rx="40" fill="#0a1a0f" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
-            {/* Pitch Markings */}
             <line x1="600" y1="290" x2="600" y2="610" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
             <circle cx="600" cy="450" r="50" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
             <circle cx="600" cy="450" r="4" fill="rgba(255,255,255,0.3)" />
-            {/* Penalty Boxes */}
             <rect x="400" y="360" width="60" height="180" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
             <rect x="740" y="360" width="60" height="180" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
 
             {/* --- STATIC POIS (Small Squares & Gates) --- */}
-            {/* Gate A (North) */}
             <rect x="570" y="70" width="60" height="40" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
             <text x="600" y="94" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="12" fontFamily="monospace">GATE A</text>
 
-            {/* Gate B (East) */}
             <rect x="1010" y="430" width="40" height="60" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
             <text x="1030" y="465" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="12" fontFamily="monospace" transform="rotate(90 1030 465)">GATE B</text>
 
-            {/* Gate C (South) */}
             <rect x="570" y="790" width="60" height="40" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
             <text x="600" y="815" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="12" fontFamily="monospace">GATE C</text>
 
-            {/* Concession Stand & Restroom Icons */}
             <rect x="480" y="165" width="40" height="30" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
             <text x="500" y="184" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="monospace">WC</text>
 
@@ -259,22 +214,21 @@ export function WayfindingView() {
             <text x="260" y="454" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="monospace">BAR</text>
 
             {/* --- KEY WAYPOINTS: Start & Destination Markers --- */}
-            <g transform={`translate(${fromPoi ? Math.max(20, Math.min(1100, fromPoi.x - 40)) : 150}, ${fromPoi ? Math.max(20, Math.min(820, fromPoi.y - 30)) : 420})`}>
-              <rect width="80" height="60" rx="14" fill="rgba(217,165,32,0.15)" stroke="#d9a520" strokeWidth="2.5" />
-              <text x="40" y="30" textAnchor="middle" fill="#fff" fontSize="11" fontFamily="monospace" fontWeight="bold">{fromPoi?.label.split(" ")[0] || "START"}</text>
-              <text x="40" y="46" textAnchor="middle" fill="#d9a520" fontSize="9" fontFamily="monospace">START</text>
+            <g transform={`translate(${fromPoi ? Math.max(20, Math.min(1060, fromPoi.x - 75)) : 150}, ${fromPoi ? Math.max(20, Math.min(820, fromPoi.y - 35)) : 420})`}>
+              <rect width="150" height="56" rx="12" fill="rgba(217,165,32,0.18)" stroke="#d9a520" strokeWidth="2" />
+              <text x="75" y="24" textAnchor="middle" fill="#fff" fontSize="10" fontFamily="monospace" fontWeight="bold">{fromPoi?.label || "START"}</text>
+              <text x="75" y="42" textAnchor="middle" fill="#d9a520" fontSize="9" fontFamily="monospace">START</text>
             </g>
 
-            <g transform={`translate(${toPoi ? Math.max(20, Math.min(1100, toPoi.x - 45)) : 710}, ${toPoi ? Math.max(20, Math.min(820, toPoi.y - 30)) : 220})`}>
-              <rect width="90" height="60" rx="14" fill="rgba(217,165,32,0.2)" stroke="#d9a520" strokeWidth="2.5" />
-              <text x="45" y="30" textAnchor="middle" fill="#fff" fontSize="11" fontFamily="monospace" fontWeight="bold">{toPoi?.label.split(" ")[0] || "DEST"}</text>
-              <text x="45" y="46" textAnchor="middle" fill="#d9a520" fontSize="10" fontFamily="monospace">DESTINATION</text>
+            <g transform={`translate(${toPoi ? Math.max(20, Math.min(1060, toPoi.x - 75)) : 710}, ${toPoi ? Math.max(20, Math.min(820, toPoi.y - 35)) : 220})`}>
+              <rect width="150" height="56" rx="12" fill="rgba(217,165,32,0.22)" stroke="#d9a520" strokeWidth="2" />
+              <text x="75" y="24" textAnchor="middle" fill="#fff" fontSize="10" fontFamily="monospace" fontWeight="bold">{toPoi?.label || "DESTINATION"}</text>
+              <text x="75" y="42" textAnchor="middle" fill="#d9a520" fontSize="9" fontFamily="monospace">DESTINATION</text>
             </g>
 
             {/* --- 2. THE ANIMATED ROUTE (SVG Path with Rapido Drawing Effect) --- */}
             {isNavigating && (
               <>
-                {/* Background blurred neon gold halo */}
                 <motion.path
                   d={rapidoPathD}
                   fill="none"
@@ -294,7 +248,6 @@ export function WayfindingView() {
                   }}
                 />
 
-                {/* Solid glowing FIFA Gold path */}
                 <motion.path
                   d={rapidoPathD}
                   fill="none"
@@ -313,7 +266,6 @@ export function WayfindingView() {
                   }}
                 />
 
-                {/* --- 3. THE LIVE TRACKING DOT (Framer Motion Beacon along coordinates) --- */}
                 <motion.g
                   animate={{
                     x: trackingX,
@@ -327,16 +279,13 @@ export function WayfindingView() {
                     repeatDelay: 1,
                   }}
                 >
-                  {/* Outer Gold Halo Radar Pulse */}
                   <motion.circle
                     r="24"
                     fill="rgba(217, 165, 32, 0.35)"
                     animate={{ scale: [1, 1.8, 1], opacity: [0.8, 0, 0.8] }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                   />
-                  {/* Mid Gold Ring */}
                   <circle r="12" fill="rgba(217, 165, 32, 0.8)" stroke="#fff" strokeWidth="2" />
-                  {/* Inner White Core Dot */}
                   <circle r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
                 </motion.g>
               </>
@@ -377,7 +326,6 @@ export function WayfindingView() {
       {/* 2. THE TOP OVERLAYS (Search Pill & Live Status - shown only when not actively navigating) */}
       {!isNavigating && (
         <div className="absolute top-24 md:top-6 left-0 right-0 z-10 pointer-events-none px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto gap-3">
-          {/* Floating Glass Search Pill & Swap Button */}
           <div className="relative w-full sm:w-80 pointer-events-auto flex items-center gap-2">
             <div className="flex-1 flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/20">
               <Search className="size-4 text-primary shrink-0" />
@@ -418,7 +366,6 @@ export function WayfindingView() {
               <ArrowUpRight className="size-4" />
             </button>
 
-            {/* Search Results Dropdown */}
             <AnimatePresence>
               {searchQuery && matchingPois.length > 0 && (
                 <motion.div
@@ -467,7 +414,6 @@ export function WayfindingView() {
             </AnimatePresence>
           </div>
 
-          {/* Live Sensor Status Badge */}
           <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl pointer-events-auto shrink-0">
             <span className="relative flex size-2 shrink-0">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
@@ -480,7 +426,7 @@ export function WayfindingView() {
         </div>
       )}
 
-      {/* 3. SLEEK BOTTOM NAVIGATION BAR — map only visible, navigation bar at bottom */}
+      {/* 3. SLEEK BOTTOM NAVIGATION BAR */}
       <AnimatePresence>
         {isNavigating && (
           <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl z-20 pointer-events-none">
@@ -491,7 +437,6 @@ export function WayfindingView() {
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="w-full bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-3 sm:px-5 sm:py-3.5 shadow-2xl flex items-center justify-between gap-4 text-white pointer-events-auto"
             >
-              {/* Left: Destination & Step info */}
               <div className="flex items-center gap-3.5 min-w-0">
                 <div className="size-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0 shadow-inner">
                   <Navigation className="size-5 text-primary animate-pulse" />
@@ -517,31 +462,23 @@ export function WayfindingView() {
                     </p>
                   )}
 
-                  {/* Congestion warning */}
-                  {hasCongestionWarning && (
+                  {isCongested && (
                     <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-amber-400 font-mono">
                       <AlertTriangle className="size-3.5 shrink-0" />
-                      <span>Route passes through high-density concourse areas</span>
-                    </div>
-                  )}
-
-                  {/* Staff operational readout */}
-                  {role === "staff" && (
-                    <div className="mt-1.5 text-[10px] text-blue-300 font-mono bg-blue-950/40 border border-blue-500/20 rounded-md px-2 py-1">
-                      <div>OPERATIONAL SENSOR TELEMETRY:</div>
-                      <div>
-                        {Array.from(routeZoneCongestion.entries()).map(([zoneId, congestion], index) => {
-                          const zoneData = snapshot?.zones.find((z) => z.id === zoneId)
-                          const occPct = zoneData ? Math.round((zoneData.occupancy / zoneData.capacity) * 100) : 60
-                          return `${zoneId.toUpperCase()}: ${congestion.toUpperCase()} (${occPct}%)${index < routeZoneCongestion.size - 1 ? " | " : ""}`
-                        })}
-                      </div>
+                      {role === "staff" ? (
+                        <span>
+                          Warning: High crowd density ({fromPoi?.zoneId}: {getZonePct(fromZone)}% [{fromZone?.congestion}], {toPoi?.zoneId}: {getZonePct(toZone)}% [{toZone?.congestion}])
+                        </span>
+                      ) : (
+                        <span>
+                          Warning: Route crosses high-density concourse areas. Expect minor delays.
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Right: Swap & End Navigation Buttons */}
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
@@ -567,7 +504,6 @@ export function WayfindingView() {
           </div>
         )}
       </AnimatePresence>
-
     </div>
   )
 }
