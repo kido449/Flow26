@@ -125,18 +125,36 @@ export function WayfindingView() {
     )
   }, [fromZone, toZone])
 
-  const rapidoPathD = "M 180 450 L 260 450 C 260 300, 350 180, 500 180 L 680 180 L 750 250"
+  const rapidoPathD = useMemo(() => {
+    if (!fromPoi || !toPoi) return "M 180 450 L 750 250"
+    const midX = (fromPoi.x + toPoi.x) / 2
+    const midY = Math.min(fromPoi.y, toPoi.y) - 60
+    return `M ${fromPoi.x} ${fromPoi.y} Q ${midX} ${midY} ${toPoi.x} ${toPoi.y}`
+  }, [fromPoi, toPoi])
 
-  const trackingX = [180, 260, 280, 340, 420, 500, 600, 680, 715, 750]
-  const trackingY = [450, 450, 360, 260, 200, 180, 180, 180, 215, 250]
+  const { trackingX, trackingY } = useMemo(() => {
+    if (!fromPoi || !toPoi) return { trackingX: [180, 750], trackingY: [450, 250] }
+    const midX = (fromPoi.x + toPoi.x) / 2
+    const midY = Math.min(fromPoi.y, toPoi.y) - 60
+    const stepsCount = 10
+    const xs: number[] = []
+    const ys: number[] = []
+    for (let i = 0; i <= stepsCount; i++) {
+      const t = i / stepsCount
+      const x = Math.round((1 - t) * (1 - t) * fromPoi.x + 2 * (1 - t) * t * midX + t * t * toPoi.x)
+      const y = Math.round((1 - t) * (1 - t) * fromPoi.y + 2 * (1 - t) * t * midY + t * t * toPoi.y)
+      xs.push(x)
+      ys.push(y)
+    }
+    return { trackingX: xs, trackingY: ys }
+  }, [fromPoi, toPoi])
 
-  const steps = [
+  const steps = useMemo(() => [
     { instruction: `Start at ${fromPoi?.label || "Gate 7"} after security screening.` },
-    { instruction: "Walk straight along the West Concourse past the FIFA Gourmet Lounge." },
-    { instruction: "Turn right and follow the curved corridor into the North Concourse." },
-    { instruction: "Continue straight along North Concourse past Restroom Block N." },
-    { instruction: `Arrive at ${toPoi?.label || "Section 104"} to access your seating section.` },
-  ]
+    { instruction: `Proceed along the express concourse toward ${toPoi?.zoneId.replace("z-", "")} zone.` },
+    { instruction: "Follow the overhead wayfinding signs along the main corridor." },
+    { instruction: `Arrive at ${toPoi?.label || "Section 104"}.` },
+  ], [fromPoi, toPoi])
 
   const currentStep = steps[currentStepIndex]
   const nextStep = steps[currentStepIndex + 1]
