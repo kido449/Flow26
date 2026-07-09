@@ -26,7 +26,11 @@ const POIS: Poi[] = [
   { id: "medical-108", kind: "medical", label: "Medical (Sec 108)", x: 38, y: 24, zoneId: "z-north" },
   { id: "medical-215", kind: "medical", label: "Medical (Club 215)", x: 78, y: 46, zoneId: "z-east" },
   { id: "exit-w", kind: "exit", label: "Emergency Exit (West)", x: 18, y: 40, zoneId: "z-west" },
-  { id: "concession-n", kind: "concession", label: "Concession (North)", x: 56, y: 32, zoneId: "z-concourse-n" },
+  { id: "gate-7", kind: "gate", label: "Gate 7 (West Entrance)", x: 15, y: 50, zoneId: "z-west" },
+  { id: "sec-104", kind: "seat", label: "Section 104 (North-East Tier)", x: 63, y: 28, zoneId: "z-north" },
+  { id: "food-w", kind: "concession", label: "FIFA Gourmet Lounge (West)", x: 22, y: 50, zoneId: "z-west" },
+  { id: "food-e", kind: "concession", label: "Matchday Taproom (East)", x: 78, y: 50, zoneId: "z-east" },
+  { id: "med-1", kind: "medical", label: "Emergency Medical Center", x: 29, y: 29, zoneId: "z-north" },
 ]
 
 // Central pitch reference used to route "around" the bowl via a concourse.

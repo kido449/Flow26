@@ -9,9 +9,9 @@ describe("RAG format helpers", () => {
         chunk: {
           id: "chunk-1",
           title: "Gate 1 Policy",
-          category: "Security",
+          category: "rules",
           text: "Clear bags only.",
-          tokens: 4,
+          keywords: [],
         },
         score: 0.85432,
       },
@@ -22,7 +22,7 @@ describe("RAG format helpers", () => {
     expect(sources[0]).toEqual({
       id: "chunk-1",
       title: "Gate 1 Policy",
-      category: "Security",
+      category: "rules",
       score: 0.85,
     })
   })
@@ -33,9 +33,9 @@ describe("RAG format helpers", () => {
         chunk: {
           id: "1",
           title: "First Aid",
-          category: "Medical",
+          category: "safety",
           text: "Located at section 104.",
-          tokens: 5,
+          keywords: [],
         },
         score: 0.9,
       },
@@ -43,9 +43,9 @@ describe("RAG format helpers", () => {
         chunk: {
           id: "2",
           title: "Water Stations",
-          category: "Amenities",
+          category: "amenities",
           text: "Near gates A and B.",
-          tokens: 5,
+          keywords: [],
         },
         score: 0.8,
       },

@@ -85,7 +85,7 @@ const INITIAL_INCIDENTS: IncidentRow[] = [
 ]
 
 export function CommandCenterView() {
-  const { t, role } = useApp()
+  const { t } = useApp()
   const { snapshot, loading } = useLiveSnapshot(3000)
   const [incidents, setIncidents] = useState<IncidentRow[]>(INITIAL_INCIDENTS)
   const [filter, setFilter] = useState<"all" | "active" | "critical" | "resolved">("active")

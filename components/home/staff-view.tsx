@@ -76,7 +76,7 @@ const INITIAL_TASKS: TaskItem[] = [
 ]
 
 export function StaffView() {
-  const { t, role } = useApp()
+  const { t } = useApp()
   const [tasks, setTasks] = useState<TaskItem[]>(INITIAL_TASKS)
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("all")
 

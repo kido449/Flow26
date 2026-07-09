@@ -21,10 +21,10 @@ const AppContext = createContext<AppState | null>(null)
 const ROLE_KEY = "tc.role"
 const LOCALE_KEY = "tc.locale"
 
-function isRole(v: string | null): v is Role {
+export function isRole(v: string | null): v is Role {
   return v === "fan" || v === "staff" || v === "command"
 }
-function isLocale(v: string | null): v is Locale {
+export function isLocale(v: string | null): v is Locale {
   return v === "en" || v === "es" || v === "fr" || v === "pt"
 }
 

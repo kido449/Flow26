@@ -20,6 +20,7 @@ import { getMapService } from "@/lib/services/map-service"
 import { useLiveSnapshot } from "@/hooks/use-live-snapshot"
 import { useApp } from "@/lib/state/app-context"
 import { cn } from "@/lib/utils"
+import type { Congestion } from "@/lib/types"
 
 // Extended POI definitions including Gate 7 and Section 104 for the Rapido route
 const RAPIDO_POIS = [
@@ -47,16 +48,24 @@ export function WayfindingView() {
   const [isNavigating, setIsNavigating] = useState<boolean>(false)
   const [zoomLevel, setZoomLevel] = useState<number>(1)
 
-  // Map constraints reference for drag
-  const mapContainerRef = useRef<HTMLDivElement>(null)
+  // Compute real route using map service
+  const route = useMemo(() => {
+    return mapService.computeRoute(fromId, toId)
+  }, [fromId, toId, mapService])
+
+  // Get POI objects for from and to (prefer mapService data, fallback to RAPIDO_POIS)
+  const toPoi = useMemo(() => {
+    return mapService.getPoi(toId) || RAPIDO_POIS.find((p) => p.id === toId) || RAPIDO_POIS[1]
+  }, [toId, mapService])
+
+  const fromPoi = useMemo(() => {
+    return mapService.getPoi(fromId) || RAPIDO_POIS.find((p) => p.id === fromId) || RAPIDO_POIS[0]
+  }, [fromId, mapService])
 
   // Reset step index whenever route changes
   useEffect(() => {
     setCurrentStepIndex(0)
   }, [fromId, toId])
-
-  const toPoi = useMemo(() => RAPIDO_POIS.find((p) => p.id === toId) || RAPIDO_POIS[1], [toId])
-  const fromPoi = useMemo(() => RAPIDO_POIS.find((p) => p.id === fromId) || RAPIDO_POIS[0], [fromId])
 
   const matchingPois = useMemo(() => {
     if (!searchQuery.trim()) return []
@@ -69,6 +78,10 @@ export function WayfindingView() {
     )
   }, [searchQuery])
 
+  // Map constraints reference for drag
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+
+  // Function to handle POI selection
   function handleSelectPoi(id: string) {
     if (id === fromId) return
     setToId(id)
@@ -79,14 +92,73 @@ export function WayfindingView() {
     toast.success(`Route calculated to ${p?.label || "destination"}`)
   }
 
-  // Rapido Route coordinates: Gate 7 (180, 450) -> West Concourse -> North Concourse -> Section 104 (750, 250)
+  // Function to swap from and to points
+  function handleSwapPoints() {
+    setToId(fromId)
+    setFromId(toId)
+    setIsNavigating(true)
+    setCurrentStepIndex(0)
+    toast.info("Swapped start and destination points")
+  }
+
+  // Get congestion data for zones in the route
+  const routeZoneCongestion = useMemo(() => {
+    if (!snapshot) return new Map<string, Congestion>()
+
+    const congestionMap = new Map(snapshot.zones.map((z) => [z.id, z.congestion]))
+    const zoneCongestion = new Map<string, Congestion>()
+
+    const zones = route?.zoneIds && route.zoneIds.length > 0
+      ? route.zoneIds
+      : [fromPoi?.zoneId || "z-west", toPoi?.zoneId || "z-north"]
+
+    zones.forEach((zoneId) => {
+      const congestion = congestionMap.get(zoneId)
+      zoneCongestion.set(zoneId, congestion ?? "low")
+    })
+
+    return zoneCongestion
+  }, [route, snapshot, fromPoi, toPoi])
+
+  // Determine if route crosses congested zones
+  const hasCongestionWarning = useMemo(() => {
+    return Array.from(routeZoneCongestion.values()).some(
+      (congestion) => congestion === "high" || congestion === "critical"
+    )
+  }, [routeZoneCongestion])
+
+  const distanceMeters = useMemo(() => {
+    if (!fromPoi || !toPoi) return 340
+    return Math.max(50, Math.round(Math.hypot(toPoi.x - fromPoi.x, toPoi.y - fromPoi.y)))
+  }, [fromPoi, toPoi])
+
+  // Use dynamic ETA from route + live snapshot congestion penalty
+  const etaMinutes = useMemo(() => {
+    const baseMinutes = route?.estimatedMinutes ?? Math.max(2, Math.round(distanceMeters / 80))
+    const livePenalty = hasCongestionWarning ? 2 : 0
+    return baseMinutes + livePenalty
+  }, [route, distanceMeters, hasCongestionWarning])
+
+  // Generate dynamic steps from route data
+  const dynamicSteps = useMemo(() => {
+    if (!route) return []
+    return route.steps.map((step, index) => ({
+      instruction: index === 0
+        ? `Start at ${step.poiId === fromPoi?.id ? fromPoi.label : mapService.getPoi(step.poiId)?.label || step.poiId}`
+        : index === route.steps.length - 1
+          ? `Arrive at ${step.poiId === toPoi?.id ? toPoi.label : mapService.getPoi(step.poiId)?.label || step.poiId}`
+          : step.instruction
+    }))
+  }, [route, fromPoi, toPoi, mapService])
+
+  // Dynamic path data
   const rapidoPathD = "M 180 450 L 260 450 C 260 300, 350 180, 500 180 L 680 180 L 750 250"
-  
+
   // Exact coordinate waypoints for the live tracking beacon animation
   const trackingX = [180, 260, 280, 340, 420, 500, 600, 680, 715, 750]
   const trackingY = [450, 450, 360, 260, 200, 180, 180, 180, 215, 250]
 
-  const steps = [
+  const steps = dynamicSteps.length > 0 ? dynamicSteps : [
     { instruction: "Start at Gate 7 (West Entrance Plaza) after security screening." },
     { instruction: "Walk straight along the West Concourse past the FIFA Gourmet Lounge." },
     { instruction: "Turn right and follow the curved corridor into the North Concourse." },
@@ -96,8 +168,6 @@ export function WayfindingView() {
 
   const currentStep = steps[currentStepIndex]
   const nextStep = steps[currentStepIndex + 1]
-  const distanceMeters = 340
-  const etaMinutes = 4
 
   return (
     <div className="fixed inset-0 h-dvh w-dvw z-20 bg-black overflow-hidden select-none selection:bg-primary/30 selection:text-white">
@@ -134,17 +204,17 @@ export function WayfindingView() {
             </defs>
 
             {/* --- STADIUM ARCHITECTURE (Minimalist Geometric Shapes) --- */}
-            
+
             {/* Outer Stadium Facade & Walkway Ring */}
             <rect x="100" y="50" width="1000" height="800" rx="200" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
             <rect x="140" y="80" width="920" height="740" rx="170" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="3" strokeDasharray="12 12" />
 
             {/* Upper Seating Tier (Segmented Ring) */}
             <rect x="180" y="110" width="840" height="680" rx="150" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.12)" strokeWidth="4" />
-            
+
             {/* Club Level / Concourse Corridor Ring */}
             <rect x="250" y="170" width="700" height="560" rx="110" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
-            
+
             {/* Lower Seating Tier Ring */}
             <rect x="320" y="230" width="560" height="440" rx="80" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.15)" strokeWidth="3" />
 
@@ -188,19 +258,17 @@ export function WayfindingView() {
             <rect x="245" y="435" width="30" height="30" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
             <text x="260" y="454" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="10" fontFamily="monospace">BAR</text>
 
-            {/* --- KEY WAYPOINTS: Gate 7 (Start) & Section 104 (End) --- */}
-            {/* Gate 7 Plaza (West) */}
-            <g transform="translate(150, 420)">
-              <rect width="60" height="60" rx="14" fill="rgba(217,165,32,0.15)" stroke="#d9a520" strokeWidth="2.5" />
-              <text x="30" y="32" textAnchor="middle" fill="#fff" fontSize="13" fontFamily="monospace" fontWeight="bold">GATE 7</text>
-              <text x="30" y="46" textAnchor="middle" fill="#d9a520" fontSize="9" fontFamily="monospace">START</text>
+            {/* --- KEY WAYPOINTS: Start & Destination Markers --- */}
+            <g transform={`translate(${fromPoi ? Math.max(20, Math.min(1100, fromPoi.x - 40)) : 150}, ${fromPoi ? Math.max(20, Math.min(820, fromPoi.y - 30)) : 420})`}>
+              <rect width="80" height="60" rx="14" fill="rgba(217,165,32,0.15)" stroke="#d9a520" strokeWidth="2.5" />
+              <text x="40" y="30" textAnchor="middle" fill="#fff" fontSize="11" fontFamily="monospace" fontWeight="bold">{fromPoi?.label.split(" ")[0] || "START"}</text>
+              <text x="40" y="46" textAnchor="middle" fill="#d9a520" fontSize="9" fontFamily="monospace">START</text>
             </g>
 
-            {/* Section 104 (North-East Tier) */}
-            <g transform="translate(710, 220)">
-              <rect width="80" height="60" rx="14" fill="rgba(217,165,32,0.2)" stroke="#d9a520" strokeWidth="2.5" />
-              <text x="40" y="32" textAnchor="middle" fill="#fff" fontSize="14" fontFamily="monospace" fontWeight="bold">SEC 104</text>
-              <text x="40" y="48" textAnchor="middle" fill="#d9a520" fontSize="10" fontFamily="monospace">DESTINATION</text>
+            <g transform={`translate(${toPoi ? Math.max(20, Math.min(1100, toPoi.x - 45)) : 710}, ${toPoi ? Math.max(20, Math.min(820, toPoi.y - 30)) : 220})`}>
+              <rect width="90" height="60" rx="14" fill="rgba(217,165,32,0.2)" stroke="#d9a520" strokeWidth="2.5" />
+              <text x="45" y="30" textAnchor="middle" fill="#fff" fontSize="11" fontFamily="monospace" fontWeight="bold">{toPoi?.label.split(" ")[0] || "DEST"}</text>
+              <text x="45" y="46" textAnchor="middle" fill="#d9a520" fontSize="10" fontFamily="monospace">DESTINATION</text>
             </g>
 
             {/* --- 2. THE ANIMATED ROUTE (SVG Path with Rapido Drawing Effect) --- */}
@@ -309,9 +377,9 @@ export function WayfindingView() {
       {/* 2. THE TOP OVERLAYS (Search Pill & Live Status - shown only when not actively navigating) */}
       {!isNavigating && (
         <div className="absolute top-24 md:top-6 left-0 right-0 z-10 pointer-events-none px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto gap-3">
-          {/* Floating Glass Search Pill */}
-          <div className="relative w-full sm:w-80 pointer-events-auto">
-            <div className="flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/20">
+          {/* Floating Glass Search Pill & Swap Button */}
+          <div className="relative w-full sm:w-80 pointer-events-auto flex items-center gap-2">
+            <div className="flex-1 flex items-center gap-2.5 bg-neutral-900/90 backdrop-blur-xl border border-white/15 rounded-full px-4 py-2.5 shadow-2xl transition-all duration-300 focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/20">
               <Search className="size-4 text-primary shrink-0" />
               <input
                 type="text"
@@ -340,6 +408,15 @@ export function WayfindingView() {
                 </button>
               )}
             </div>
+            <button
+              type="button"
+              onClick={handleSwapPoints}
+              className="p-2.5 rounded-full bg-neutral-900/90 border border-white/15 hover:bg-neutral-800 text-white/80 hover:text-white transition-colors cursor-pointer shrink-0"
+              title="Swap Start and Destination"
+              aria-label="Swap Start and Destination"
+            >
+              <ArrowUpRight className="size-4" />
+            </button>
 
             {/* Search Results Dropdown */}
             <AnimatePresence>
@@ -352,23 +429,38 @@ export function WayfindingView() {
                   className="absolute top-full mt-2 w-full bg-neutral-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-1.5 shadow-2xl max-h-60 overflow-y-auto z-50 divide-y divide-white/5"
                 >
                   {matchingPois.map((p) => (
-                    <button
+                    <div
                       key={p.id}
-                      type="button"
-                      onClick={() => handleSelectPoi(p.id)}
-                      className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-neutral-800 text-left transition-colors cursor-pointer group"
+                      className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-neutral-800 text-left transition-colors"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <MapPin className="size-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                        <div>
-                          <div className="text-xs font-semibold text-white font-mono uppercase tracking-wider">{p.label}</div>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <MapPin className="size-4 text-primary shrink-0" />
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-white font-mono uppercase tracking-wider truncate">{p.label}</div>
                           <div className="text-[10px] text-white/40 font-sans capitalize">{p.kind} • {p.zoneId.replace("z-", "")}</div>
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                        Navigate
-                      </span>
-                    </button>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFromId(p.id)
+                            setSearchQuery("")
+                            toast.success(`Set start point to ${p.label}`)
+                          }}
+                          className="text-[10px] font-mono uppercase tracking-wider text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded-full border border-white/20 cursor-pointer"
+                        >
+                          Start
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPoi(p.id)}
+                          className="text-[10px] font-mono uppercase tracking-wider text-primary bg-primary/10 hover:bg-primary/20 px-2 py-0.5 rounded-full border border-primary/20 cursor-pointer"
+                        >
+                          Dest
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </motion.div>
               )}
@@ -404,33 +496,73 @@ export function WayfindingView() {
                 <div className="size-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0 shadow-inner">
                   <Navigation className="size-5 text-primary animate-pulse" />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center flex-wrap gap-2">
                     <span className="text-xs sm:text-sm font-semibold text-white truncate font-sans">
                       {toPoi?.label || "Section 104"}
                     </span>
                     <span className="text-[10px] font-mono uppercase tracking-wider bg-primary/20 text-primary px-2 py-0.5 rounded-full shrink-0 font-bold">
                       {etaMinutes} {t("wayfinding.etaWalk")}
                     </span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider bg-white/10 text-white/80 px-2 py-0.5 rounded-full shrink-0">
+                      {distanceMeters}m
+                    </span>
                   </div>
-                  <p className="text-xs text-white/70 truncate font-sans mt-0.5">
+                  <p className="text-xs text-white/90 truncate font-sans mt-1 font-medium">
                     {currentStep?.instruction || "Proceed along step-free express concourse"}
                   </p>
+                  {nextStep && (
+                    <p className="text-[11px] text-white/50 truncate font-sans mt-0.5">
+                      Next: {nextStep.instruction}
+                    </p>
+                  )}
+
+                  {/* Congestion warning */}
+                  {hasCongestionWarning && (
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-amber-400 font-mono">
+                      <AlertTriangle className="size-3.5 shrink-0" />
+                      <span>Route passes through high-density concourse areas</span>
+                    </div>
+                  )}
+
+                  {/* Staff operational readout */}
+                  {role === "staff" && (
+                    <div className="mt-1.5 text-[10px] text-blue-300 font-mono bg-blue-950/40 border border-blue-500/20 rounded-md px-2 py-1">
+                      <div>OPERATIONAL SENSOR TELEMETRY:</div>
+                      <div>
+                        {Array.from(routeZoneCongestion.entries()).map(([zoneId, congestion], index) => {
+                          const zoneData = snapshot?.zones.find((z) => z.id === zoneId)
+                          const occPct = zoneData ? Math.round((zoneData.occupancy / zoneData.capacity) * 100) : 60
+                          return `${zoneId.toUpperCase()}: ${congestion.toUpperCase()} (${occPct}%)${index < routeZoneCongestion.size - 1 ? " | " : ""}`
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Right: End Navigation Button Down at the Bottom */}
-              <button
-                type="button"
-                onClick={() => {
-                  toast.success("Navigation completed. Arrived at destination!")
-                  setIsNavigating(false)
-                }}
-                className="shrink-0 px-4 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono uppercase tracking-widest text-xs font-bold transition-all shadow-lg shadow-red-600/30 cursor-pointer flex items-center gap-2"
-              >
-                <X className="size-3.5" />
-                <span>End Navigation</span>
-              </button>
+              {/* Right: Swap & End Navigation Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleSwapPoints}
+                  className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                  title="Swap Start and Destination"
+                >
+                  <ArrowUpRight className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.success("Navigation completed. Arrived at destination!")
+                    setIsNavigating(false)
+                  }}
+                  className="px-4 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono uppercase tracking-widest text-xs font-bold transition-all shadow-lg shadow-red-600/30 cursor-pointer flex items-center gap-2"
+                >
+                  <X className="size-3.5" />
+                  <span>End Navigation</span>
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

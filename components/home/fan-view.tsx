@@ -8,7 +8,7 @@ import { useApp } from "@/lib/state/app-context"
 import { STADIUM_NAME } from "@/lib/rag/knowledge"
 
 export function FanView() {
-  const { t, role } = useApp()
+  const { t } = useApp()
   const [videoLoaded, setVideoLoaded] = useState(false)
 
   return (
