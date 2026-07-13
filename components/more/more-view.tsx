@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Shield, Globe, Cpu, Radio, BarChart3, Lock, Zap, Bus, Accessibility, Crown, AlertTriangle, Coffee, ShieldAlert, type LucideIcon } from "lucide-react"
+import { Sparkles, Shield, Globe, Cpu, Radio, Lock, Zap, Bus, Accessibility, Crown, AlertTriangle, Coffee, ShieldAlert, type LucideIcon } from "lucide-react"
 import { MagicBento } from "@/components/ui/magic-bento"
 import { useApp } from "@/lib/state/app-context"
 import { STADIUM_NAME } from "@/lib/rag/knowledge"
@@ -52,20 +52,28 @@ export function MoreView() {
       icon: Globe,
     },
     {
+      title: "Stadium Sustainability Programs",
+      description:
+        "Zero-waste-to-landfill operations, solar-powered lighting, water refill stations, and carbon offset partnerships for eco-friendly matchdays.",
+      label: "Sustainability",
+      href: "/sustainability",
+      icon: Globe,
+    },
+    {
+      title: "Live Transportation & Transit Hub",
+      description:
+        "Metro Line 2 schedules, parking lot availability, rideshare pickup zones, and post-match shuttle tracking with live crowd data integration.",
+      label: "Transit",
+      href: "/transit",
+      icon: Radio,
+    },
+    {
       title: "Role-Based Command Layouts",
       description:
         "Customized UI workspaces tailored for Fan chat assistance, Staff operational dashboards, and Command Center strategic bird's-eye monitoring.",
       label: "Access Control",
       href: "/more",
       icon: Shield,
-    },
-    {
-      title: "Predictive Egress Simulation",
-      description:
-        "Machine learning models forecasting post-match crowd bottlenecks and automatically dispatching crowd control teams 15 minutes prior to peak surge.",
-      label: "Forecasting",
-      href: "/crowd",
-      icon: BarChart3,
     },
     {
       title: "Global Multilingual Translation",

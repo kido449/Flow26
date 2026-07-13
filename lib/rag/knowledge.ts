@@ -92,4 +92,26 @@ export const KNOWLEDGE_BASE: KnowledgeChunk[] = [
     text: "Concession stands are on every concourse. Halal, vegetarian, and gluten-free options are marked with icons on the stand menus. Water refill stations are located near sections 106, 128, and 152. Mobile ordering is available in the official app for club-level guests.",
     keywords: ["food", "concession", "eat", "drink", "water", "halal", "vegetarian", "gluten", "snack", "beer", "menu"],
   },
+  {
+    id: "k-sustainability-waste",
+    title: "Waste management and recycling",
+    category: "sustainability",
+    text: `${STADIUM_NAME} operates a zero-waste-to-landfill program for all matchday events. Color-coded bins for recyclables (blue), compostables (green), and general waste (gray) are placed every 30 meters on all concourses. All food containers are compostable. Fans are encouraged to use the free water refill stations near sections 106, 128, and 152 instead of buying single-use bottles.`,
+    keywords: ["recycle", "recycling", "waste", "bin", "trash", "compost", "sustainability", "green", "environment", "eco", "zero waste", "plastic"],
+  },
+  {
+    id: "k-sustainability-energy",
+    title: "Energy and water conservation",
+    category: "sustainability",
+    text: `${STADIUM_NAME} is powered by a rooftop solar array generating 3.2 MW and uses rainwater harvesting for pitch irrigation and restroom flushing. LED stadium lighting reduces energy consumption by 60% compared to legacy fixtures. Real-time energy dashboards in the command center track consumption per zone to minimize waste during low-attendance periods.`,
+    keywords: ["solar", "energy", "power", "electricity", "water conservation", "rainwater", "LED", "sustainability", "carbon", "green energy", "renewable"],
+  },
+  {
+    id: "k-sustainability-transport",
+    title: "Sustainable transport and carbon offset",
+    category: "sustainability",
+    text: "The stadium partners with the city transit authority to offer free metro passes on matchdays for ticket holders, reducing car traffic and emissions. Electric vehicle charging stations are available in the North and East parking lots. A carbon offset calculator in the official app estimates each fan's matchday footprint and offers options to offset via verified reforestation programs.",
+    keywords: ["carbon", "offset", "electric", "EV", "charging", "green transport", "emissions", "climate", "carbon footprint", "sustainable transport"],
+  },
 ]
+

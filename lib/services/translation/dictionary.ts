@@ -163,6 +163,24 @@ export type TranslationKey =
   | "wayfinding.nextStep"
   | "wayfinding.exitWayfinding"
   | "wayfinding.endRoute"
+  | "sustainability.title"
+  | "sustainability.subtitle"
+  | "sustainability.waste.title"
+  | "sustainability.waste.desc"
+  | "sustainability.energy.title"
+  | "sustainability.energy.desc"
+  | "sustainability.transport.title"
+  | "sustainability.transport.desc"
+  | "sustainability.aiTip"
+  | "transit.title"
+  | "transit.subtitle"
+  | "transit.metro.title"
+  | "transit.metro.desc"
+  | "transit.parking.title"
+  | "transit.parking.desc"
+  | "transit.rideshare.title"
+  | "transit.rideshare.desc"
+  | "transit.aiTip"
 
 type Dictionary = Record<TranslationKey, string>
 
@@ -325,6 +343,24 @@ const en: Dictionary = {
   "wayfinding.nextStep": "Next Step",
   "wayfinding.exitWayfinding": "Exit Wayfinding",
   "wayfinding.endRoute": "End Navigation",
+  "sustainability.title": "Sustainability",
+  "sustainability.subtitle": "Stadium environmental programs and green initiatives for FIFA World Cup 2026.",
+  "sustainability.waste.title": "Zero-Waste Program",
+  "sustainability.waste.desc": "Color-coded recycling bins every 30m. All food containers are compostable. Free water refill stations replace single-use bottles.",
+  "sustainability.energy.title": "Renewable Energy",
+  "sustainability.energy.desc": "3.2 MW rooftop solar array, rainwater harvesting for pitch irrigation, and LED lighting reducing consumption by 60%.",
+  "sustainability.transport.title": "Green Transport",
+  "sustainability.transport.desc": "Free matchday metro passes for ticket holders, EV charging stations, and a carbon offset calculator in the official app.",
+  "sustainability.aiTip": "Ask the AI copilot about recycling, energy, or carbon offset programs.",
+  "transit.title": "Transportation",
+  "transit.subtitle": "Live transit information and getting to the stadium.",
+  "transit.metro.title": "Metro Line 2",
+  "transit.metro.desc": "Stadium station — 6 min walk from Gate B. Trains every 4 min on matchdays until 2 hours after final whistle.",
+  "transit.parking.title": "Parking & Rideshare",
+  "transit.parking.desc": "North, East, West lots (pre-book online). Rideshare pickup at East lot near Gate B. Accessible parking at North lot.",
+  "transit.rideshare.title": "Post-Match Shuttle",
+  "transit.rideshare.desc": "Dedicated shuttle to downtown transit hub from West lot near Gate D after every match.",
+  "transit.aiTip": "Ask the AI copilot for personalized transit advice.",
 }
 
 const es: Dictionary = {
@@ -486,6 +522,24 @@ const es: Dictionary = {
   "wayfinding.nextStep": "Siguiente Paso",
   "wayfinding.exitWayfinding": "Salir de Rutas",
   "wayfinding.endRoute": "Finalizar Navegación",
+  "sustainability.title": "Sostenibilidad",
+  "sustainability.subtitle": "Programas ambientales del estadio e iniciativas ecológicas para la Copa del Mundo FIFA 2026.",
+  "sustainability.waste.title": "Programa Cero Residuos",
+  "sustainability.waste.desc": "Contenedores de reciclaje codificados por colores cada 30 m. Envases compostables. Estaciones de recarga de agua gratuitas.",
+  "sustainability.energy.title": "Energía Renovable",
+  "sustainability.energy.desc": "Panel solar de 3,2 MW, recolección de agua de lluvia y luminarias LED con 60% menos consumo.",
+  "sustainability.transport.title": "Transporte Ecológico",
+  "sustainability.transport.desc": "Pases de metro gratuitos en días de partido, estaciones de carga para vehículos eléctricos y calculadora de huella de carbono.",
+  "sustainability.aiTip": "Pregunta al copiloto IA sobre reciclaje, energía o programas de compensación de carbono.",
+  "transit.title": "Transporte",
+  "transit.subtitle": "Información de tránsito en vivo y cómo llegar al estadio.",
+  "transit.metro.title": "Metro Línea 2",
+  "transit.metro.desc": "Estación del estadio — 6 min a pie desde la Puerta B. Trenes cada 4 min en días de partido.",
+  "transit.parking.title": "Aparcamiento y Transporte",
+  "transit.parking.desc": "Lotes Norte, Este, Oeste (reservar online). Parada de transporte compartido en el lote Este.",
+  "transit.rideshare.title": "Autobús Post-Partido",
+  "transit.rideshare.desc": "Autobús dedicado al centro de tránsito desde el lote Oeste cerca de la Puerta D.",
+  "transit.aiTip": "Pregunta al copiloto IA para consejos de transporte personalizados.",
 }
 
 const fr: Dictionary = {
@@ -647,6 +701,24 @@ const fr: Dictionary = {
   "wayfinding.nextStep": "Étape Suivante",
   "wayfinding.exitWayfinding": "Quitter l'itinéraire",
   "wayfinding.endRoute": "Terminer la navigation",
+  "sustainability.title": "Durabilité",
+  "sustainability.subtitle": "Programmes environnementaux du stade et initiatives vertes pour la Coupe du Monde FIFA 2026.",
+  "sustainability.waste.title": "Programme Zéro Déchet",
+  "sustainability.waste.desc": "Poubelles de tri tous les 30 m. Emballages compostables. Fontaines d'eau gratuites pour remplacer les bouteilles jetables.",
+  "sustainability.energy.title": "Énergie Renouvelable",
+  "sustainability.energy.desc": "Panneaux solaires de 3,2 MW, récupération d'eau de pluie et éclairage LED réduisant la consommation de 60 %.",
+  "sustainability.transport.title": "Transport Écologique",
+  "sustainability.transport.desc": "Pass métro gratuits les jours de match, bornes de recharge pour véhicules électriques et calculateur d'empreinte carbone.",
+  "sustainability.aiTip": "Demandez au copilote IA des informations sur le recyclage, l'énergie ou la compensation carbone.",
+  "transit.title": "Transport",
+  "transit.subtitle": "Informations de transit en direct et comment accéder au stade.",
+  "transit.metro.title": "Métro Ligne 2",
+  "transit.metro.desc": "Station du stade — 6 min à pied du Portail B. Trains toutes les 4 min les jours de match.",
+  "transit.parking.title": "Stationnement et Covoiturage",
+  "transit.parking.desc": "Parkings Nord, Est, Ouest (réservation en ligne). Dépose-minute au parking Est près du Portail B.",
+  "transit.rideshare.title": "Navette Post-Match",
+  "transit.rideshare.desc": "Navette dédiée vers le hub de transit depuis le parking Ouest près du Portail D.",
+  "transit.aiTip": "Demandez au copilote IA des conseils de transport personnalisés.",
 }
 
 const pt: Dictionary = {
@@ -808,6 +880,24 @@ const pt: Dictionary = {
   "wayfinding.nextStep": "Próximo Passo",
   "wayfinding.exitWayfinding": "Sair das Rotas",
   "wayfinding.endRoute": "Encerrar Navegação",
+  "sustainability.title": "Sustentabilidade",
+  "sustainability.subtitle": "Programas ambientais do estádio e iniciativas verdes para a Copa do Mundo FIFA 2026.",
+  "sustainability.waste.title": "Programa Lixo Zero",
+  "sustainability.waste.desc": "Lixeiras de reciclagem a cada 30 m. Embalagens compostáveis. Estações de recarga de água gratuitas.",
+  "sustainability.energy.title": "Energia Renovável",
+  "sustainability.energy.desc": "Painéis solares de 3,2 MW, captação de água da chuva e iluminação LED com 60% menos consumo.",
+  "sustainability.transport.title": "Transporte Sustentável",
+  "sustainability.transport.desc": "Passes de metrô gratuitos em dias de jogo, estações de recarga para veículos elétricos e calculadora de pegada de carbono.",
+  "sustainability.aiTip": "Pergunte ao copiloto IA sobre reciclagem, energia ou programas de compensação de carbono.",
+  "transit.title": "Transporte",
+  "transit.subtitle": "Informações de trânsito ao vivo e como chegar ao estádio.",
+  "transit.metro.title": "Metrô Linha 2",
+  "transit.metro.desc": "Estação do estádio — 6 min a pé do Portão B. Trens a cada 4 min em dias de jogo.",
+  "transit.parking.title": "Estacionamento e Transporte",
+  "transit.parking.desc": "Estacionamentos Norte, Leste, Oeste (reservar online). Embarque/desembarque no estacionamento Leste.",
+  "transit.rideshare.title": "Ônibus Pós-Jogo",
+  "transit.rideshare.desc": "Ônibus dedicado ao hub de trânsito do centro desde o estacionamento Oeste perto do Portão D.",
+  "transit.aiTip": "Pergunte ao copiloto IA para dicas de transporte personalizadas.",
 }
 
 export const DICTIONARIES: Record<Locale, Dictionary> = { en, es, fr, pt }

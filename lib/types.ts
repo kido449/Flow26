@@ -65,7 +65,7 @@ export interface KnowledgeChunk {
   // Short human title shown as a citation.
   title: string
   // Category used to scope retrieval and display grouping.
-  category: "gates" | "seating" | "amenities" | "rules" | "timing" | "transport" | "safety" | "tickets"
+  category: "gates" | "seating" | "amenities" | "rules" | "timing" | "transport" | "safety" | "tickets" | "sustainability"
   text: string
   // Extra keywords to boost retrieval beyond the raw text.
   keywords: string[]

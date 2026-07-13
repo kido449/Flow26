@@ -5,11 +5,11 @@ import type { Locale } from "@/lib/types"
 describe("Suggestions localization integrity", () => {
   const locales: Locale[] = ["en", "es", "fr", "pt"]
 
-  it("provides 4 starter suggestions for every supported locale", () => {
+  it("provides 5 starter suggestions for every supported locale", () => {
     for (const locale of locales) {
       const list = SUGGESTIONS[locale]
       expect(Array.isArray(list)).toBe(true)
-      expect(list).toHaveLength(4)
+      expect(list).toHaveLength(5)
       for (const q of list) {
         expect(typeof q).toBe("string")
         expect(q.length).toBeGreaterThan(10)
@@ -22,5 +22,6 @@ describe("Suggestions localization integrity", () => {
     expect(SUGGESTIONS.en[1]).toContain("medical")
     expect(SUGGESTIONS.en[2]).toContain("prohibited")
     expect(SUGGESTIONS.en[3]).toContain("metro")
+    expect(SUGGESTIONS.en[4]).toContain("sustainability")
   })
 })

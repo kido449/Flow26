@@ -6,10 +6,10 @@ import type { ChatSource, Locale, RetrievedChunk } from "@/lib/types"
 // grounded refusal message. All pure + unit-tested.
 
 export const NO_DATA_MESSAGE: Record<Locale, string> = {
-  en: "I don't have that information in my stadium data, so I can't answer that reliably. Try asking about gates, seating, restrooms, medical stations, exits, transport, tickets, timing, accessibility, or food.",
-  es: "No tengo esa información en mis datos del estadio, así que no puedo responder con fiabilidad. Pregúntame sobre puertas, asientos, baños, puestos médicos, salidas, transporte, entradas, horarios, accesibilidad o comida.",
-  fr: "Je n'ai pas cette information dans mes données du stade, je ne peux donc pas répondre de façon fiable. Posez-moi des questions sur les portes, les sièges, les toilettes, les postes de secours, les sorties, les transports, les billets, les horaires, l'accessibilité ou la restauration.",
-  pt: "Não tenho essa informação nos dados do estádio, então não posso responder com segurança. Pergunte sobre portões, assentos, banheiros, postos médicos, saídas, transporte, ingressos, horários, acessibilidade ou alimentação.",
+  en: "I don't have that information in my stadium data, so I can't answer that reliably. Try asking about gates, seating, restrooms, medical stations, exits, transport, tickets, timing, accessibility, food, or sustainability.",
+  es: "No tengo esa información en mis datos del estadio, así que no puedo responder con fiabilidad. Pregúntame sobre puertas, asientos, baños, puestos médicos, salidas, transporte, entradas, horarios, accesibilidad, comida o sostenibilidad.",
+  fr: "Je n'ai pas cette information dans mes données du stade, je ne peux donc pas répondre de façon fiable. Posez-moi des questions sur les portes, les sièges, les toilettes, les postes de secours, les sorties, les transports, les billets, les horaires, l'accessibilité, la restauration ou le développement durable.",
+  pt: "Não tenho essa informação nos dados do estádio, então não posso responder com segurança. Pergunte sobre portões, assentos, banheiros, postos médicos, saídas, transporte, ingressos, horários, acessibilidade, alimentação ou sustentabilidade.",
 }
 
 export function toSources(retrieved: RetrievedChunk[]): ChatSource[] {
