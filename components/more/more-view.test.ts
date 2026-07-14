@@ -5,9 +5,9 @@ import { NAV_ITEMS } from "@/components/nav-items"
 
 describe("Stub Modules & Navigation Configuration", () => {
   it("defines all required stub modules for Tournament Copilot", () => {
-    expect(STUB_MODULES.length).toBe(6)
+    // Transit is excluded — a real TransitView with live data replaces the stub.
+    expect(STUB_MODULES.length).toBe(5)
     const slugs = STUB_MODULES.map((m) => m.slug)
-    expect(slugs).toContain("transit")
     expect(slugs).toContain("accessibility")
     expect(slugs).toContain("vip")
     expect(slugs).toContain("emergency")

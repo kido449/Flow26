@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Shield, Globe, Cpu, Radio, Lock, Zap, Bus, Accessibility, Crown, AlertTriangle, Coffee, ShieldAlert, type LucideIcon } from "lucide-react"
+import { Sparkles, Shield, Globe, Cpu, Radio, Lock, Zap, Accessibility, Crown, AlertTriangle, Coffee, ShieldAlert, type LucideIcon } from "lucide-react"
 import { MagicBento } from "@/components/ui/magic-bento"
 import { useApp } from "@/lib/state/app-context"
 import { STADIUM_NAME } from "@/lib/rag/knowledge"
@@ -14,8 +14,8 @@ export interface StubModule {
   icon: LucideIcon
 }
 
+// Transit is excluded — a real TransitView with live data exists at components/more/transit-view.tsx.
 export const STUB_MODULES: StubModule[] = [
-  { slug: "transit", titleKey: "stub.transit.title", descKey: "stub.transit.desc", icon: Bus },
   { slug: "accessibility", titleKey: "stub.accessibility.title", descKey: "stub.accessibility.desc", icon: Accessibility },
   { slug: "vip", titleKey: "stub.vip.title", descKey: "stub.vip.desc", icon: Crown },
   { slug: "emergency", titleKey: "stub.emergency.title", descKey: "stub.emergency.desc", icon: AlertTriangle },
